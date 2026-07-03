@@ -2,40 +2,47 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>👆 CLICKER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>👆 CLICKER · C418 Edition</title>
     <style>
-        /* ── ШРИФТ ── */
-        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-        /* ── ОСНОВНЫЕ СТИЛИ ── */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             background: #080810;
             color: #fff;
-            font-family: 'Google Sans', 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             overflow-x: hidden;
             user-select: none;
-            min-height: 100vh;
-            animation: bgShift 12s ease-in-out infinite alternate;
-        }
-        @keyframes bgShift {
-            0% { background: #080810; }
-            25% { background: #0b0a1a; }
-            50% { background: #0f0a24; }
-            75% { background: #0a0c1e; }
-            100% { background: #080810; }
+            -webkit-font-smoothing: antialiased;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a18; }
-        ::-webkit-scrollbar-thumb { background: #825AFF; border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(130, 90, 255, 0.3);
+            border-radius: 10px;
+        }
 
-        /* ── ПЕРВЫЙ ЭКРАН ── */
+        #particlesCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
         .hero {
             min-height: 100vh;
             display: flex;
@@ -47,208 +54,133 @@
             position: relative;
             z-index: 10;
             animation: fadeUp 1.2s ease-out;
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
+
+        .hero.hidden {
+            opacity: 0;
+            transform: scale(1.04);
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+        }
+
         @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(40px); }
+            0% { opacity: 0; transform: translateY(30px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        h1 {
+
+        .hero h1 {
             font-size: 72px;
-            font-weight: 700;
+            font-weight: 900;
             background: linear-gradient(135deg, #825AFF, #A57AFF, #FF6B9D);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 4px;
-            animation: gradShift 6s ease-in-out infinite, pulseGlow 3s ease-in-out infinite;
-            background-size: 300% 300%;
+            letter-spacing: -2px;
+            animation: pulseGlow 3s ease-in-out infinite;
             cursor: pointer;
-            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        h1:active { transform: scale(0.94); }
-        @keyframes gradShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+
         @keyframes pulseGlow {
-            0%, 100% { filter: drop-shadow(0 0 20px rgba(130,90,255,0.3)); }
-            50% { filter: drop-shadow(0 0 60px rgba(130,90,255,0.7)); }
+            0%, 100% { filter: drop-shadow(0 0 30px rgba(130, 90, 255, 0.2)); }
+            50% { filter: drop-shadow(0 0 70px rgba(130, 90, 255, 0.5)); }
         }
-        .subtitle {
-            font-size: 20px;
-            color: #9a8ab8;
-            margin-top: 10px;
+
+        .hero .subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 8px;
             letter-spacing: 6px;
-            font-weight: 400;
-            animation: fadeIn 1.8s ease-out;
-        }
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+            font-weight: 300;
         }
 
-        /* ── КНОПКИ НАВИГАЦИИ ── */
-        .nav-bar {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(12, 12, 26, 0.45);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            padding: 10px 20px;
-            border-radius: 60px;
-            border: 1px solid rgba(130, 90, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-            animation: slideDown 0.8s ease-out;
-        }
-        @keyframes slideDown {
-            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        .nav-btn {
-            color: #b0a8c8;
-            padding: 8px 18px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 14px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            letter-spacing: 0.5px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            position: relative;
-        }
-        .nav-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background: #A57AFF;
-            transition: width 0.3s ease;
-        }
-        .nav-btn:hover::after { width: 60%; }
-        .nav-btn:hover {
-            color: #fff;
-            background: rgba(130, 90, 255, 0.15);
-            transform: translateY(-2px) scale(1.04);
-        }
-        .nav-btn:active { transform: scale(0.94); }
-
-        .btn {
+        .btn-play {
             display: inline-block;
             margin-top: 40px;
             padding: 18px 56px;
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 18px;
+            font-weight: 600;
             color: #fff;
             background: linear-gradient(135deg, #825AFF, #6A3FD4);
             border: none;
             border-radius: 60px;
-            text-decoration: none;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 0 30px rgba(130,90,255,0.3);
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
-            animation: pulseBtn 3s ease-in-out infinite;
-        }
-        @keyframes pulseBtn {
-            0%, 100% { box-shadow: 0 0 30px rgba(130,90,255,0.3); }
-            50% { box-shadow: 0 0 60px rgba(130,90,255,0.5); }
-        }
-        .btn:hover {
-            transform: scale(1.08) translateY(-2px);
-            box-shadow: 0 0 80px rgba(130,90,255,0.7);
-            background: linear-gradient(135deg, #A57AFF, #825AFF);
-        }
-        .btn:active { transform: scale(0.94); }
-        .btn .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.4);
-            transform: scale(0);
-            animation: rippleAnim 0.7s ease-out forwards;
-            pointer-events: none;
-        }
-        @keyframes rippleAnim {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(4); opacity: 0; }
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 40px rgba(130, 90, 255, 0.15);
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
         }
 
-        .stats {
+        .btn-play:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 60px rgba(130, 90, 255, 0.3);
+        }
+
+        .btn-play:active {
+            transform: scale(0.95);
+        }
+
+        .hero-stats {
             margin-top: 30px;
             display: flex;
             justify-content: center;
             gap: 40px;
-            color: #6a5a8a;
-            font-size: 14px;
-            font-weight: 700;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
             letter-spacing: 1px;
-            animation: fadeIn 2s ease-out;
+            flex-wrap: wrap;
         }
-        .stats span { color: #A57AFF; font-weight: 700; }
-        .stats div {
-            transition: all 0.3s ease;
-            cursor: default;
-        }
-        .stats div:hover {
-            transform: translateY(-4px);
-            color: #fff;
-        }
-        .stats div:hover span { color: #FFD700; }
 
-        /* ── БЕСКОНЕЧНОСТЬ ДЛЯ ПАСХАЛКИ ── */
-        .stats .infinity {
-            cursor: pointer;
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: inline-block;
-        }
-        .stats .infinity:active {
-            transform: scale(0.8);
+        .hero-stats span {
+            color: #A57AFF;
+            font-weight: 600;
         }
 
         .scroll-down {
             margin-top: 50px;
-            font-size: 32px;
+            font-size: 28px;
             animation: bob 1.8s infinite;
-            opacity: 0.5;
+            opacity: 0.3;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .scroll-down:hover { opacity: 1; transform: scale(1.1); }
-        .scroll-down a { color: #825AFF; text-decoration: none; }
-        @keyframes bob {
-            0%, 100% { transform: translateY(0); opacity: 0.4; }
-            50% { transform: translateY(12px); opacity: 0.8; }
         }
 
-        /* ── ВТОРОЙ ЭКРАН ── */
+        .scroll-down a {
+            color: #825AFF;
+            text-decoration: none;
+        }
+
+        @keyframes bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
         .info-section {
-            padding: 80px 20px 40px;
-            max-width: 1000px;
+            padding: 60px 20px 80px;
+            max-width: 960px;
             margin: 0 auto;
-            background: rgba(12, 12, 26, 0.55);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            background: rgba(12, 12, 26, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 40px 40px 0 0;
-            box-shadow: 0 -20px 60px rgba(0,0,0,0.7);
+            border: 1px solid rgba(130, 90, 255, 0.06);
+            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.4);
             position: relative;
             z-index: 20;
-            border-top: 1px solid rgba(130, 90, 255, 0.15);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
+
+        .info-section.hidden {
+            opacity: 0;
+            transform: translateY(40px);
+            pointer-events: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
         .info-section h2 {
-            font-size: 40px;
+            font-size: 36px;
             font-weight: 700;
             background: linear-gradient(135deg, #A57AFF, #FF6B9D);
             -webkit-background-clip: text;
@@ -256,1135 +188,2427 @@
             margin-bottom: 30px;
             text-align: center;
         }
+
         .info-section p {
-            font-size: 18px;
+            font-size: 17px;
             line-height: 1.8;
-            color: #e0d8ee;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 20px;
             text-align: justify;
-            font-weight: 400;
-        }
-        .info-section .highlight { color: #A57AFF; font-weight: 700; }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .info-card {
-            background: rgba(18, 16, 30, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 24px;
-            border-radius: 16px;
-            border-left: 4px solid #825AFF;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            opacity: 0;
-            transform: translateY(30px);
-            animation: cardUp 0.6s ease-out forwards;
-            cursor: default;
-        }
-        .info-card:nth-child(1) { animation-delay: 0.1s; }
-        .info-card:nth-child(2) { animation-delay: 0.2s; }
-        .info-card:nth-child(3) { animation-delay: 0.3s; }
-        .info-card:nth-child(4) { animation-delay: 0.4s; }
-
-        @keyframes cardUp {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
         }
 
-        .info-card:hover {
-            background: rgba(26, 22, 42, 0.85);
-            transform: perspective(600px) rotateY(3deg) translateY(-6px) scale(1.01);
-            box-shadow: 0 16px 60px rgba(130,90,255,0.2);
-            border-color: #A57AFF;
-        }
-        .info-card:active {
-            transform: perspective(600px) rotateY(0deg) scale(0.97);
-        }
-        .info-card h3 { color: #A57AFF; font-size: 18px; margin-bottom: 8px; font-weight: 700; }
-        .info-card p { font-size: 15px; color: #b0a8c8; margin: 0; text-align: left; font-weight: 400; }
-
-        /* ── РАЗРАБОТЧИК ── */
-        .dev-block {
-            margin-top: 60px;
-            padding: 30px;
-            background: rgba(13, 11, 26, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            border: 1px solid rgba(42, 31, 74, 0.6);
-            opacity: 0;
-            transform: translateY(30px);
-            animation: cardUp 0.7s ease-out 0.5s forwards;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .dev-block:hover {
-            border-color: #825AFF;
-            box-shadow: 0 0 60px rgba(130,90,255,0.08);
-        }
-        .dev-block h3 {
-            font-size: 20px;
+        .info-section .highlight {
             color: #A57AFF;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 700;
+            font-weight: 600;
         }
-        .dev-inner {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-            justify-content: center;
+        .info-section .accent {
+            color: #46DC78;
+            font-weight: 600;
         }
-        .dev-avatar {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #825AFF, #FF6B9D);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            box-shadow: 0 0 40px rgba(130,90,255,0.4);
-            border: 3px solid #A57AFF;
-            animation: spin 10s linear infinite;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .info-section .pink {
+            color: #FF6B9D;
+            font-weight: 600;
         }
-        .dev-avatar:hover {
-            transform: scale(1.08) rotate(0deg);
-            box-shadow: 0 0 80px rgba(130,90,255,0.6);
+        .info-section .gold {
+            color: #FFCD37;
+            font-weight: 600;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .dev-info {
-            text-align: left;
-            color: #c8c0d8;
-            font-size: 16px;
-            line-height: 1.8;
-        }
-        .dev-info .name { font-size: 28px; font-weight: 700; color: #fff; }
-        .dev-info .tag { color: #6a5a8a; font-size: 14px; font-weight: 400; }
-        .dev-stats {
-            display: flex;
-            gap: 20px;
-            margin-top: 6px;
-            flex-wrap: wrap;
-            font-weight: 700;
-        }
-        .dev-stats span { color: #fff; }
-        .dev-desc {
-            margin-top: 20px;
-            text-align: center;
-            color: #9a8ab8;
-            font-size: 14px;
-            border-top: 1px solid rgba(26, 22, 42, 0.6);
-            padding-top: 18px;
-            font-weight: 400;
-        }
-        .dev-desc .highlight { color: #A57AFF; font-weight: 700; }
 
-        /* ── ВИКИПЕДИЯ ── */
-        .wiki-section {
-            margin-top: 60px;
-            padding: 30px;
-            background: rgba(13, 11, 26, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            border: 1px solid rgba(42, 31, 74, 0.4);
-            opacity: 0;
-            transform: translateY(30px);
-            animation: cardUp 0.7s ease-out 0.6s forwards;
-        }
-        .wiki-section h2 {
-            font-size: 28px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #A57AFF, #825AFF);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
         .wiki-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 14px;
+            margin: 24px 0;
         }
-        .wiki-card {
-            background: rgba(18, 16, 30, 0.6);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid rgba(130, 90, 255, 0.15);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: default;
+
+        .wiki-block {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 16px 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(130, 90, 255, 0.05);
+            transition: 0.3s;
         }
-        .wiki-card:hover {
-            background: rgba(26, 22, 42, 0.7);
-            transform: translateY(-4px) scale(1.01);
-            border-color: rgba(130, 90, 255, 0.5);
-            box-shadow: 0 12px 40px rgba(130,90,255,0.1);
+
+        .wiki-block:hover {
+            border-color: rgba(130, 90, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
         }
-        .wiki-card:active { transform: scale(0.97); }
-        .wiki-card h4 {
-            color: #A57AFF;
-            font-size: 18px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+
+        .wiki-block .title {
+            font-size: 15px;
             font-weight: 700;
+            color: #A57AFF;
+            margin-bottom: 4px;
         }
-        .wiki-card p {
-            font-size: 14px;
-            color: #b0a8c8;
+
+        .wiki-block .desc {
+            font-size: 12.5px;
+            color: rgba(255, 255, 255, 0.5);
             line-height: 1.6;
-            font-weight: 400;
         }
-        .wiki-card ul {
+
+        .wiki-block .desc strong {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .wiki-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .wiki-tags span {
+            background: rgba(130, 90, 255, 0.08);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 9px;
+            color: #A57AFF;
+            font-weight: 600;
+        }
+
+        .wiki-list {
             list-style: none;
             padding: 0;
-            margin-top: 8px;
+            margin: 4px 0 0;
         }
-        .wiki-card ul li {
-            font-size: 13px;
-            color: #9a8ab8;
-            padding: 4px 0;
-            padding-left: 18px;
+
+        .wiki-list li {
+            padding: 2px 0 2px 14px;
             position: relative;
-            font-weight: 400;
+            font-size: 12.5px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.6;
         }
-        .wiki-card ul li::before {
+
+        .wiki-list li::before {
             content: '▸';
             position: absolute;
             left: 0;
-            color: #825AFF;
-        }
-        .wiki-tag {
-            display: inline-block;
-            background: rgba(130, 90, 255, 0.2);
             color: #A57AFF;
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 20px;
-            margin-top: 6px;
-            font-weight: 700;
         }
 
-        /* ── ОБНОВЛЕНИЯ ── */
-        .updates-section {
-            margin-top: 60px;
-            padding: 30px;
-            background: rgba(13, 11, 26, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            border: 1px solid rgba(130, 90, 255, 0.3);
-            opacity: 0;
-            transform: translateY(30px);
-            animation: cardUp 0.7s ease-out 0.7s forwards;
+        .wiki-list li strong {
+            color: rgba(255, 255, 255, 0.85);
         }
-        .updates-section h2 {
-            font-size: 28px;
-            font-weight: 700;
+
+        .back-top {
+            display: block;
+            margin: 40px auto 10px;
             text-align: center;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #A57AFF, #46A5FF);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .back-top:hover {
+            color: #A57AFF;
+        }
+
+        #gameScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(10, 10, 18, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            overflow-y: auto;
+            padding: 16px 16px 30px;
+            animation: gameIn 0.5s ease;
+        }
+
+        #gameScreen.active {
+            display: flex;
+        }
+
+        @keyframes gameIn {
+            0% { opacity: 0; transform: scale(0.96); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .game-top {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            width: 100%;
+            max-width: 600px;
+            padding: 10px 14px;
+            background: rgba(10, 10, 18, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(130, 90, 255, 0.06);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px 10px;
+            margin-bottom: 12px;
+        }
+
+        .game-top .brand {
+            font-weight: 700;
+            font-size: 16px;
+            background: linear-gradient(135deg, #A57AFF, #FF6B9D);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
         }
-        .update-list {
+
+        .game-top .top-actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .game-top .top-actions button {
+            background: rgba(130, 90, 255, 0.08);
+            border: 1px solid rgba(130, 90, 255, 0.05);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .game-top .top-actions button:hover {
+            background: rgba(130, 90, 255, 0.15);
+            color: #A57AFF;
+        }
+
+        .game-top .back-btn {
+            background: rgba(255, 60, 60, 0.06);
+            border-color: rgba(255, 60, 60, 0.06);
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .game-top .back-btn:hover {
+            background: rgba(255, 60, 60, 0.12);
+            color: #FF6B6B;
+        }
+
+        .game-top .stats {
+            display: flex;
+            gap: 10px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+            flex-wrap: wrap;
+        }
+
+        .game-top .stats span {
+            color: #A57AFF;
+        }
+
+        .game-center {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
         }
-        .update-item {
-            background: rgba(18, 16, 30, 0.5);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            padding: 18px 22px;
-            border-radius: 16px;
-            border-left: 4px solid #825AFF;
-            transition: all 0.3s ease;
+
+        .game-points {
+            font-size: 42px;
+            font-weight: 800;
+            color: #fff;
+            margin: 4px 0 2px;
+            text-align: center;
+            letter-spacing: -0.5px;
         }
-        .update-item:hover {
-            background: rgba(26, 22, 42, 0.7);
-            transform: translateX(6px);
-            border-left-width: 6px;
+
+        .game-points small {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+            display: block;
+            letter-spacing: 2px;
         }
-        .update-item .header {
+
+        .game-points .bump {
+            animation: bump 0.2s ease;
+        }
+
+        @keyframes bump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); color: #A57AFF; }
+            100% { transform: scale(1); }
+        }
+
+        .game-click {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #825AFF, #6A3FD4);
+            border: none;
+            color: #fff;
+            font-size: 44px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 60px rgba(130, 90, 255, 0.1);
+            transition: all 0.06s ease;
+            margin: 8px 0 12px;
+            position: relative;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .game-click:active {
+            transform: scale(0.88);
+            box-shadow: 0 0 80px rgba(130, 90, 255, 0.2);
+        }
+
+        .game-click::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #825AFF, #FF6B9D);
+            opacity: 0.06;
+            z-index: -1;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { transform: scale(1); opacity: 0.06; }
+            50% { transform: scale(1.1); opacity: 0.15; }
+        }
+
+        .game-shop {
+            width: 100%;
+            max-width: 600px;
+            margin: 6px 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            border: 1px solid rgba(130, 90, 255, 0.04);
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .game-shop-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.01);
+            transition: background 0.2s;
+        }
+
+        .game-shop-head:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .game-shop-head h3 {
+            font-size: 14px;
+            color: #A57AFF;
+            font-weight: 600;
+        }
+
+        .game-shop-head .arrow {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .game-shop-head .arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .game-shop-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .game-shop-body.open {
+            max-height: 3000px;
+        }
+
+        .game-shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 8px;
+            padding: 10px 14px 14px;
+        }
+
+        .game-shop-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 10px;
+            border-radius: 10px;
+            border-left: 2px solid #825AFF;
+            text-align: center;
+            transition: all 0.15s ease;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .game-shop-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .game-shop-item .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e8e0f0;
+        }
+
+        .game-shop-item .effect {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            margin: 2px 0;
+        }
+
+        .game-shop-item .cost {
+            font-size: 12px;
+            font-weight: 700;
+            color: #FFCD37;
+        }
+
+        .game-shop-item .level {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .game-shop-item .buy-btn {
+            margin-top: 4px;
+            padding: 4px 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .game-shop-item .buy-btn.ok {
+            background: #46DC78;
+            color: #0a0a12;
+        }
+
+        .game-shop-item .buy-btn.ok:hover {
+            transform: scale(1.03);
+        }
+
+        .game-shop-item .buy-btn.no {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+        }
+
+        .game-shop-item .buy-btn .sub {
+            display: block;
+            font-size: 8px;
+            opacity: 0.6;
+            font-weight: 400;
+        }
+
+        .game-prestige {
+            width: 100%;
+            max-width: 600px;
+            margin: 6px 0;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(180, 80, 255, 0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 6px;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
-        .update-item .version {
-            font-weight: 700;
-            font-size: 16px;
-            color: #fff;
-        }
-        .update-item .version .tag {
-            display: inline-block;
-            background: rgba(130, 90, 255, 0.25);
-            color: #A57AFF;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 12px;
-            border-radius: 20px;
-            margin-left: 8px;
-        }
-        .update-item .date {
+
+        .game-prestige .info {
             font-size: 12px;
-            color: #6a5a8a;
-            font-weight: 400;
-        }
-        .update-item .changes {
-            list-style: none;
-            padding: 0;
-            margin-top: 6px;
-        }
-        .update-item .changes li {
-            font-size: 14px;
-            color: #b0a8c8;
-            padding: 3px 0;
-            padding-left: 22px;
-            position: relative;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-        .update-item .changes li::before {
-            content: '▸';
-            position: absolute;
-            left: 0;
-            color: #825AFF;
-            font-weight: 700;
+            color: rgba(255, 255, 255, 0.3);
         }
 
-        /* ── СКРЕТЧ-КАРТА ── */
-        .scratch-section {
-            margin-top: 60px;
-            padding: 30px 20px;
-            background: rgba(13, 11, 26, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            border: 1px solid rgba(130, 90, 255, 0.3);
-            text-align: center;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: cardUp 0.7s ease-out 0.7s forwards;
+        .game-prestige .info span {
+            color: #B450FF;
+            font-weight: 600;
         }
-        .scratch-section h3 {
-            font-size: 22px;
-            color: #A57AFF;
-            margin-bottom: 6px;
-            font-weight: 700;
-        }
-        .scratch-section p {
-            font-size: 14px;
-            color: #9a8ab8;
-            margin-bottom: 16px;
-            font-weight: 400;
-        }
-        .scratch-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 520px;
-            margin: 0 auto;
-            aspect-ratio: 16 / 5;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid rgba(130, 90, 255, 0.2);
+
+        .game-prestige .prestige-btn {
+            padding: 5px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #B450FF;
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
             cursor: pointer;
-            user-select: none;
-            touch-action: none;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
         }
-        .scratch-wrapper:hover {
-            border-color: rgba(130, 90, 255, 0.5);
-            box-shadow: 0 0 40px rgba(130,90,255,0.1);
-        }
-        .scratch-back {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #1a1030, #2a1a4a);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-weight: 700;
-            font-size: 28px;
-            letter-spacing: 3px;
-            color: #FFD700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-        .scratch-back small {
-            font-size: 13px;
-            font-weight: 400;
-            color: #b0a8c8;
-            letter-spacing: 1px;
-            margin-top: 4px;
-            text-shadow: none;
-        }
-        .scratch-back .code {
-            font-family: 'Google Sans', 'Courier New', monospace;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 4px 16px;
-            border-radius: 10px;
-            font-size: 30px;
-            letter-spacing: 6px;
-            border: 1px solid rgba(255, 215, 0, 0.15);
-            font-weight: 700;
-        }
-        .scratch-layer {
-            position: absolute;
-            inset: 0;
-            border-radius: 14px;
-            transition: opacity 0.3s;
-            pointer-events: auto;
-        }
-        .scratch-layer.revealed {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .scratch-progress {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 520px;
-            margin: 12px auto 0;
-        }
-        .scratch-progress .track {
-            flex: 1;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        .scratch-progress .track .fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #825AFF, #A57AFF);
-            border-radius: 20px;
-            transition: width 0.15s;
-        }
-        .scratch-progress .label {
-            font-size: 13px;
-            font-weight: 700;
-            color: #b0a8c8;
-            min-width: 44px;
-            text-align: right;
-        }
-        .scratch-progress .label.done {
-            color: #FFD700;
-        }
-        .scratch-reset {
-            margin-top: 12px;
-            padding: 8px 24px;
-            background: rgba(130, 90, 255, 0.15);
-            border: 1px solid #825AFF;
-            border-radius: 40px;
-            color: #A57AFF;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: inline-block;
-        }
-        .scratch-reset:hover {
-            background: rgba(130, 90, 255, 0.3);
-            box-shadow: 0 0 30px rgba(130, 90, 255, 0.2);
-            transform: translateY(-2px);
-        }
-        .scratch-reset:active { transform: scale(0.94); }
 
-        .back-top {
-            display: block;
-            margin: 40px auto 20px;
-            text-align: center;
-            color: #6a5a8a;
-            font-size: 14px;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-weight: 700;
+        .game-prestige .prestige-btn:hover {
+            transform: scale(1.04);
         }
-        .back-top:hover {
-            color: #A57AFF;
-            transform: translateY(-3px) scale(1.04);
-        }
-        .back-top:active { transform: scale(0.94); }
 
-        /* ── ОВЕРЛЕЙ ДЛЯ ПАСХАЛОК ── */
-        .easter-overlay {
+        .game-prestige .prestige-btn:disabled {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+        }
+
+        .modal {
             position: fixed;
             inset: 0;
-            z-index: 999;
+            z-index: 100;
             display: none;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            animation: fadeOverlay 0.5s ease-out;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
-        .easter-overlay.active { display: flex; }
-        @keyframes fadeOverlay {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+
+        .modal.active {
+            display: flex;
         }
-        .easter-popup {
-            background: linear-gradient(145deg, #0f0a1a, #1a1030);
-            border: 2px solid #825AFF;
-            border-radius: 32px;
-            padding: 40px 50px;
-            max-width: 520px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 0 80px rgba(130, 90, 255, 0.3);
-            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+        .modal-box {
+            background: rgba(20, 16, 31, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(130, 90, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 440px;
+            width: 92%;
+            max-height: 80vh;
+            overflow-y: auto;
             position: relative;
-            transition: all 0.3s ease;
+            animation: modalIn 0.3s ease;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
         }
-        .easter-popup:hover {
-            box-shadow: 0 0 120px rgba(130, 90, 255, 0.5);
+
+        @keyframes modalIn {
+            0% { transform: scale(0.95) translateY(10px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
-        @keyframes popIn {
-            0% { transform: scale(0.7); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+
+        .modal-box .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .easter-popup .icon {
-            font-size: 72px;
-            margin-bottom: 8px;
-            animation: floatIcon 2s ease-in-out infinite;
-            transition: all 0.3s ease;
+
+        .modal-box .close-modal:hover {
+            color: #fff;
+            background: rgba(255, 60, 60, 0.1);
+            border-color: rgba(255, 60, 60, 0.2);
+            transform: rotate(90deg);
         }
-        .easter-popup .icon:hover {
-            transform: scale(1.2) rotate(10deg);
+
+        .modal-box h2 {
+            font-size: 20px;
+            color: #A57AFF;
+            margin-bottom: 12px;
+            padding-right: 30px;
         }
-        @keyframes floatIcon {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+
+        .modal-box .body {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            line-height: 1.6;
         }
-        .easter-popup .title {
-            font-size: 28px;
+
+        .modal-pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .modal-pet {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(130, 90, 255, 0.04);
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .modal-pet:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-pet .icon {
+            font-size: 24px;
+        }
+        .modal-pet .name {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .modal-pet .rarity {
+            font-size: 8px;
+        }
+        .modal-pet .bonus {
+            font-size: 9px;
+            color: #46DC78;
+        }
+        .modal-pet.eq {
+            border-color: #FFCD37;
+            background: rgba(255, 215, 0, 0.04);
+        }
+
+        .modal-pet .eq-btn {
+            margin-top: 3px;
+            padding: 2px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal-pet .eq-btn.on {
+            background: #46A5FF;
+            color: #fff;
+        }
+        .modal-pet .eq-btn.off {
+            background: #FF6B6B;
+            color: #fff;
+        }
+
+        .modal-btn {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #A57AFF;
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+            margin: 4px 0;
+        }
+
+        .modal-btn:hover {
+            transform: scale(1.04);
+            background: #8a66e6;
+        }
+
+        .modal-reward-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.04);
+            margin: 10px 0;
+        }
+
+        .modal-reward-box .info {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .modal-reward-box .info span {
+            color: #FFCD37;
+            font-weight: 600;
+        }
+
+        .modal-reward-box .claim-btn {
+            padding: 6px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #FFCD37;
+            color: #0a0a12;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal-reward-box .claim-btn:hover {
+            transform: scale(1.04);
+        }
+        .modal-reward-box .claim-btn:disabled {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+        }
+
+        .modal-codes-box {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .modal-codes-box input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(42, 42, 58, 0.6);
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            min-width: 120px;
+        }
+
+        .modal-codes-box input:focus {
+            border-color: #825AFF;
+            box-shadow: 0 0 20px rgba(130, 90, 255, 0.05);
+        }
+
+        .modal-codes-box .redeem-btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #46DC78;
+            color: #0a0a12;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal-codes-box .redeem-btn:hover {
+            transform: scale(1.04);
+        }
+
+        .code-hint {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.2);
+            margin-top: 8px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* ─── МУЗЫКАЛЬНАЯ МОДАЛКА ─── */
+        .music-player-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            padding: 16px;
+            margin: 10px 0;
+            border: 1px solid rgba(130, 90, 255, 0.06);
+        }
+
+        .music-player-wrapper iframe {
+            border-radius: 12px;
+            width: 100%;
+            height: 120px;
+            border: none;
+        }
+
+        .music-track-list {
+            margin-top: 12px;
+        }
+
+        .music-track-list .track {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            transition: 0.2s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .music-track-list .track:hover {
+            background: rgba(130, 90, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .music-track-list .track .num {
+            color: rgba(255, 255, 255, 0.15);
+            margin-right: 10px;
+        }
+
+        .music-track-list .track .duration {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 11px;
+        }
+
+        .achievement-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 300;
+            background: rgba(20, 16, 31, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 14px 20px;
+            max-width: 340px;
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .achievement-popup.show {
+            transform: translateX(0);
+        }
+
+        .achievement-popup .title {
+            font-size: 14px;
             font-weight: 700;
             color: #FFD700;
-            text-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
-            letter-spacing: 2px;
         }
-        .easter-popup .subtitle {
-            font-size: 18px;
-            color: #A57AFF;
-            margin: 8px 0 16px;
-            background: rgba(130, 90, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 12px;
-            display: inline-block;
-            font-weight: 700;
-        }
-        .easter-popup .desc {
-            color: #b0a8c8;
-            font-size: 14px;
-            line-height: 1.6;
-            font-weight: 400;
-        }
-        .easter-popup .close-btn {
-            margin-top: 20px;
-            padding: 10px 36px;
-            background: linear-gradient(135deg, #825AFF, #6A3FD4);
-            border: none;
-            border-radius: 40px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .easter-popup .close-btn:hover {
-            transform: scale(1.06);
-            box-shadow: 0 0 40px rgba(130, 90, 255, 0.4);
-        }
-        .easter-popup .close-btn:active { transform: scale(0.94); }
 
-        /* ── CANVAS ── */
-        #particlesCanvas {
+        .achievement-popup .desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 2px;
+        }
+
+        .achievement-popup .icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .achievement-popup .flex {
+            display: flex;
+            align-items: center;
+        }
+
+        .mini-game-area {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .mini-game-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(130, 90, 255, 0.05);
+            transition: all 0.2s ease;
+            font-size: 28px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mini-game-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(130, 90, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        .mini-game-card.matched {
+            background: rgba(70, 220, 120, 0.15);
+            border-color: #46DC78;
+            cursor: default;
+        }
+
+        .mini-game-card.selected {
+            background: rgba(130, 90, 255, 0.15);
+            border-color: #A57AFF;
+        }
+
+        .mini-game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .mini-game-stats span {
+            color: #A57AFF;
+            font-weight: 600;
+        }
+
+        .toast {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(70, 220, 120, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: #0a0a12;
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 200;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             pointer-events: none;
-            z-index: 1;
+            text-align: center;
+            max-width: 90%;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 10px 40px rgba(70, 220, 120, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: rgba(255, 60, 60, 0.9);
+            color: #fff;
+            box-shadow: 0 10px 40px rgba(255, 60, 60, 0.15);
+        }
+
+        .toast.info {
+            background: rgba(130, 90, 255, 0.9);
+            color: #fff;
+            box-shadow: 0 10px 40px rgba(130, 90, 255, 0.15);
+        }
+
+        .click-pop {
+            position: fixed;
+            pointer-events: none;
+            font-size: 20px;
+            z-index: 100;
+            animation: popUp 0.7s ease-out forwards;
+        }
+
+        @keyframes popUp {
+            0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.5) rotate(30deg); }
+        }
+
+        @keyframes starFall {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg) scale(0.3); opacity: 0; }
+        }
+
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            background: rgba(20, 16, 31, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(130, 90, 255, 0.08);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .music-control:hover {
+            background: rgba(130, 90, 255, 0.15);
+            color: #A57AFF;
+            transform: scale(1.05);
         }
 
         @media (max-width: 700px) {
-            h1 { font-size: 40px; }
-            .subtitle { font-size: 14px; letter-spacing: 3px; }
-            .btn { padding: 14px 32px; font-size: 16px; }
-            .stats { flex-direction: column; gap: 8px; }
-            .info-grid { grid-template-columns: 1fr; }
-            .info-section h2 { font-size: 28px; }
-            .info-section p { font-size: 16px; }
-            .dev-inner { flex-direction: column; text-align: center; }
-            .dev-info { text-align: center; }
-            .dev-stats { justify-content: center; }
-            .nav-bar {
-                top: 12px;
-                padding: 6px 12px;
-                gap: 4px;
-                border-radius: 30px;
+            .hero h1 {
+                font-size: 40px;
             }
-            .nav-btn { font-size: 10px; padding: 4px 10px; }
-            .wiki-grid { grid-template-columns: 1fr; }
-            .wiki-section h2 { font-size: 22px; }
-            .update-item .header { flex-direction: column; align-items: flex-start; }
-            .scratch-back .code { font-size: 20px; letter-spacing: 3px; padding: 2px 10px; }
-            .scratch-back { font-size: 20px; }
-            .scratch-wrapper { aspect-ratio: 16 / 5; }
-            .easter-popup { padding: 28px 20px; }
-            .easter-popup .icon { font-size: 52px; }
-            .easter-popup .title { font-size: 22px; }
+            .hero .subtitle {
+                font-size: 14px;
+                letter-spacing: 3px;
+            }
+            .btn-play {
+                padding: 14px 32px;
+                font-size: 16px;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .wiki-grid {
+                grid-template-columns: 1fr;
+            }
+            .info-section h2 {
+                font-size: 28px;
+            }
+            .info-section p {
+                font-size: 16px;
+            }
+            .game-points {
+                font-size: 34px;
+            }
+            .game-click {
+                width: 100px;
+                height: 100px;
+                font-size: 36px;
+            }
+            .game-shop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            .game-top .stats {
+                font-size: 10px;
+                gap: 6px;
+            }
+            .game-top .top-actions button {
+                font-size: 10px;
+                padding: 3px 10px;
+            }
+            .modal-box {
+                padding: 18px;
+            }
+            .mini-game-area {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .achievement-popup {
+                top: 10px;
+                right: 10px;
+                max-width: 280px;
+                padding: 12px 16px;
+            }
+            .music-control {
+                bottom: 80px;
+                right: 16px;
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="particlesCanvas" aria-hidden="true"></canvas>
+    <!-- ══════════════════════════════════════ -->
+    <!-- ЧАСТИЦЫ (Canvas)                     -->
+    <!-- ══════════════════════════════════════ -->
+    <canvas id="particlesCanvas"></canvas>
 
-    <!-- НАВИГАЦИЯ -->
-    <nav class="nav-bar" aria-label="Основная навигация">
-        <a href="https://discord.gg/QXXqzX2vV" target="_blank" class="nav-btn" aria-label="Перейти в Discord сообщество">🔊 Community</a>
-        <a href="https://github.com/stakllzdev" target="_blank" class="nav-btn" aria-label="Исходный код на GitHub">📰 Sources</a>
-        <a href="https://www.roblox.com/games/85805488315374" target="_blank" class="nav-btn" aria-label="Страница игры в Roblox">🎮 Resources</a>
-        <a href="#" target="_blank" class="nav-btn" aria-label="Страница для донатов">❤️ Donate</a>
-        <a href="#" target="_blank" class="nav-btn" aria-label="Список участников проекта">👥 Contributors</a>
-    </nav>
+    <!-- ══════════════════════════════════════ -->
+    <!-- МУЗЫКАЛЬНАЯ КНОПКА                   -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="music-control" id="musicControl" title="🎵 Открыть плеер C418">🎵</div>
 
-    <!-- ГЛАВНЫЙ ЭКРАН -->
-    <main class="hero" role="main">
-        <h1 id="clickerLogo" aria-label="Кликер — логотип">👆 CLICKER</h1>
-        <p class="subtitle" aria-label="Слоган игры">НАЖМИ — И СЛОМАЙ ВСЕЛЕННУЮ</p>
-        <a href="https://www.roblox.com/games/85805488315374" class="btn" id="mainBtn" target="_blank" aria-label="Перейти на страницу игры и начать играть">🚀 ИГРАТЬ</a>
-        <div class="stats">
-            <div aria-label="Бесконечные очки">💎 ОЧКИ <span class="infinity" id="infinityTrigger" aria-label="Бесконечность">∞</span></div>
-            <div aria-label="Количество игроков">👥 ИГРОКИ <span>1 234</span></div>
-            <div aria-label="Бесконечный престиж">⭐ ПРЕСТИЖ <span aria-label="Бесконечность">∞</span></div>
-        </div>
-        <div class="scroll-down" role="button" aria-label="Прокрутить вниз к информации об игре">
-            <a href="#info" aria-hidden="true">⬇</a>
-        </div>
-    </main>
-
-    <!-- ИНФОРМАЦИЯ -->
-    <section class="info-section" id="info" aria-label="Информация об игре">
-        <h2>🚀 ОБ ИГРЕ</h2>
-        <p><span class="highlight">Clicker</span> — это не просто кликер. Это история о том, как один разработчик решил доказать, что кликеры могут быть <span class="highlight">глубокими, красивыми и бесконечными</span>.</p>
-        <p>В игре <span class="highlight">более 40 улучшений</span>, система престижа, десятки питомцев и живое сообщество.</p>
-
-        <div class="info-grid">
-            <div class="info-card"><h3>🔥 44 улучшения</h3><p>От базовых до магических и научно-фантастических.</p></div>
-            <div class="info-card"><h3>🐉 Питомцы</h3><p>Семь редкостей, от обычного до секретного.</p></div>
-            <div class="info-card"><h3>⭐ Престиж</h3><p>Перерождайся и становись сильнее.</p></div>
-            <div class="info-card"><h3>👥 Сообщество</h3><p>Обмен питомцами, таблица лидеров.</p></div>
-        </div>
-
-        <!-- ─── ВИКИПЕДИЯ ─── -->
-        <div class="wiki-section" aria-label="Мини-википедия игры">
-            <h2>📖 ВИКИПЕДИЯ ИГРЫ</h2>
-            <div class="wiki-grid">
-                <div class="wiki-card"><h4>⚡ Улучшения</h4><p>44 улучшения в 5 категориях: База, Магия, Sci-Fi, Природа, Тьма.</p></div>
-                <div class="wiki-card"><h4>🐾 Питомцы</h4><p>7 редкостей: от Обычного до Секретного. 21 питомец.</p></div>
-                <div class="wiki-card"><h4>⚙️ Системы</h4><p>Комбо, криты, бустеры, награды, коды, таблица лидеров.</p></div>
-                <div class="wiki-card"><h4>⭐ Престиж</h4><p>Перерождение с +50% бонусом. Цена растёт: 1М → 3М → 9М → ...</p></div>
+    <!-- ══════════════════════════════════════ -->
+    <!-- АЧИВКА (всплывающее уведомление)     -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="achievement-popup" id="achievementPopup">
+        <div class="flex">
+            <span class="icon" id="achIcon">🏆</span>
+            <div>
+                <div class="title" id="achTitle">Достижение!</div>
+                <div class="desc" id="achDesc">Вы выполнено!</div>
             </div>
-        </div>
-
-        <!-- ─── ОБНОВЛЕНИЯ ─── -->
-        <div class="updates-section" aria-label="Список обновлений игры">
-            <h2>📋 ОБНОВЛЕНИЯ</h2>
-            <div class="update-list">
-                <div class="update-item">
-                    <div class="header">
-                        <div class="version">v2.4 <span class="tag">ПИТОМЦЫ</span></div>
-                        <div class="date">03.07.2026</div>
-                    </div>
-                    <ul class="changes">
-                        <li>🐉 Добавлена система питомцев — 21 питомец, 7 редкостей</li>
-                        <li>🥚 5 видов яиц: от обычного до легендарного</li>
-                        <li>🎒 Инвентарь с экипировкой до 3 питомцев</li>
-                        <li>✨ Питомцы дают пассивный бонус к множителю</li>
-                    </ul>
-                </div>
-                <div class="update-item">
-                    <div class="header">
-                        <div class="version">v2.3 <span class="tag">ПРОФИЛИ</span></div>
-                        <div class="date">02.07.2026</div>
-                    </div>
-                    <ul class="changes">
-                        <li>👤 Новая кнопка профиля (чуть больше остальных)</li>
-                        <li>🏅 Медали — за достижения и от администратора</li>
-                        <li>🪨 Тир-система: Новичок → Медный → ... → Легендарный</li>
-                        <li>📊 Статистика: клики, криты, питомцы</li>
-                        <li>🏆 Прогресс достижений с полоской</li>
-                    </ul>
-                </div>
-                <div class="update-item">
-                    <div class="header">
-                        <div class="version">v2.2 <span class="tag">VIP</span></div>
-                        <div class="date">01.07.2026</div>
-                    </div>
-                    <ul class="changes">
-                        <li>⭐ VIP статус через GamePass Roblox</li>
-                        <li>🐉 VIP питомец — Золотой дракон (+10 к множителю)</li>
-                        <li>💰 +15% к очкам за клик и пассивному доходу</li>
-                        <li>🏆 Золотой ник и бейдж [VIP] в таблице лидеров</li>
-                    </ul>
-                </div>
-                <div class="update-item">
-                    <div class="header">
-                        <div class="version">v2.1 <span class="tag">ОБМЕН</span></div>
-                        <div class="date">30.06.2026</div>
-                    </div>
-                    <ul class="changes">
-                        <li>🔄 Новая вкладка обмена питомцами с другими игроками</li>
-                        <li>🗑 Кнопка удаления питомца с двойным подтверждением</li>
-                        <li>👥 Список онлайн-игроков для выбора партнёра</li>
-                        <li>✓ Обмен требует подтверждения от обеих сторон</li>
-                    </ul>
-                </div>
-                <div class="update-item">
-                    <div class="header">
-                        <div class="version">v1.9 <span class="tag">ЯЙЦА</span></div>
-                        <div class="date">29.06.2026</div>
-                    </div>
-                    <ul class="changes">
-                        <li>🥚 Первая версия системы яиц и питомцев</li>
-                        <li>🐾 5 редкостей: Обычный → Секретный</li>
-                        <li>🎉 Анимация при выпадении редкого питомца</li>
-                    </ul>
-                </div>
-                <div class="update-item">
-                    <div class="header">
-                        <div class="version">v1.0 <span class="tag">РЕЛИЗ</span></div>
-                        <div class="date">20.06.2026</div>
-                    </div>
-                    <ul class="changes">
-                        <li>🎮 Базовая механика кликера</li>
-                        <li>🛒 Магазин с 5 улучшениями</li>
-                        <li>⭐ Система престижа</li>
-                        <li>💾 Сохранение прогресса</li>
-                        <li>📱 Адаптация под телефоны</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- ─── СКРЕТЧ-КАРТА ─── -->
-        <div class="scratch-section" aria-label="Скретч-карта с промокодом">
-            <h3>🎁 СКРЕТЧ-КАРТА</h3>
-            <p>Проведи мышкой с зажатой левой кнопкой, чтобы стереть слой и получить код</p>
-            <div class="scratch-wrapper" id="scratchWrapper">
-                <div class="scratch-back">
-                    <span class="code">DEVELOPER</span>
-                    <small>★ введи в игре и получи 1 000 000 очков ★</small>
-                </div>
-                <canvas class="scratch-layer" id="scratchCanvas" width="800" height="250"></canvas>
-            </div>
-            <div class="scratch-progress">
-                <span class="label" id="progressLabel">0%</span>
-                <div class="track">
-                    <div class="fill" id="progressFill" style="width:0%;"></div>
-                </div>
-            </div>
-            <button class="scratch-reset" id="resetBtn">↻ Сбросить</button>
-        </div>
-
-        <!-- РАЗРАБОТЧИК -->
-        <div class="dev-block" aria-label="Блок о разработчике">
-            <h3>👤 РАЗРАБОТЧИК</h3>
-            <div class="dev-inner">
-                <div class="dev-avatar" role="img" aria-label="Аватар разработчика stakllzdev">👤</div>
-                <div class="dev-info">
-                    <div class="name">stakllzdev</div>
-                    <div class="tag">@stakllzdev</div>
-                    <div class="dev-stats">
-                        <span>👥 <span>5</span> друзей</span>
-                        <span>📢 <span>136</span> подписчиков</span>
-                        <span>📖 <span>0</span> подписок</span>
-                    </div>
-                </div>
-            </div>
-            <div class="dev-desc">
-                🎮 Создатель <span class="highlight">Clicker</span> — игры, где каждый клик приближает тебя к бесконечности.<br />
-                🧠 Дизайн, код, питомцы, престиж — всё сделано с нуля.
-            </div>
-        </div>
-
-        <p style="text-align:center;margin-top:30px;color:#6a5a8a;font-size:14px;">
-            <span class="highlight">Сделано с душой.</span> Без читов, доната и AI-контента.
-        </p>
-        <a href="#" class="back-top" aria-label="Вернуться наверх страницы">⬆ Наверх</a>
-    </section>
-
-    <!-- ─── ПАСХАЛКА 1: ДЕННИ ─── -->
-    <div class="easter-overlay" id="dennyOverlay">
-        <div class="easter-popup">
-            <div class="icon">🎭</div>
-            <div class="title">ТЫ НАШЁЛ ДЕННИ!</div>
-            <div class="subtitle">1 in 10 000 000 000 000 000</div>
-            <p class="desc">
-                🔥 Ты — один из триллиона!<br />
-                Денни пришёл из параллельной вселенной,<br />
-                чтобы сказать: <strong>ты легенда!</strong>
-            </p>
-            <button class="close-btn" id="dennyClose">✧ ЗНАЮ ✧</button>
         </div>
     </div>
 
-    <!-- ─── ПАСХАЛКА 2: yyyyui39 и stakllzdev ─── -->
-    <div class="easter-overlay" id="easterOverlay2">
-        <div class="easter-popup">
-            <div class="icon">👣</div>
-            <div class="title">yyyyui39 и stakllzdev были здесь..</div>
-            <div class="subtitle">★ они оставили свой след в истории ★</div>
-            <p class="desc">
-                🔥 Две легенды прошли по этой вселенной<br />
-                и оставили след, который никто не сотрёт.
+    <!-- ══════════════════════════════════════ -->
+    <!-- ПЕРВЫЙ ЭКРАН (hero + вики)           -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="mainScreen">
+        <div class="hero" id="heroSection">
+            <h1 id="clickerLogo">👆 CLICKER</h1>
+            <p class="subtitle">НАЖМИ — И СЛОМАЙ ВСЕЛЕННУЮ</p>
+
+            <button class="btn-play" id="playBtn">🚀 ИГРАТЬ</button>
+
+            <div class="hero-stats">
+                <div class="stat-item">💎 ОЧКИ <span id="heroPoints">0</span></div>
+                <div class="stat-item">⚡ СИЛА <span id="heroPower">1</span></div>
+                <div class="stat-item">⏳ ПАССИВ <span id="heroPassive">0</span>/с</div>
+                <div class="stat-item">⭐ ПРЕСТИЖ <span id="heroPrestige">0</span></div>
+            </div>
+
+            <div class="scroll-down">
+                <a href="#info">⬇</a>
+            </div>
+        </div>
+
+        <!-- ─── ИНФОРМАЦИЯ + ВИКИ ─── -->
+        <div class="info-section" id="info">
+            <h2>🚀 ОБ ИГРЕ</h2>
+
+            <p>
+                <span class="highlight">Clicker</span> — это не просто кликер.
+                Это история о том, как один разработчик решил доказать,
+                что кликеры могут быть <span class="highlight">глубокими, красивыми и бесконечными</span>.
             </p>
-            <button class="close-btn" id="closeEaster2">✧ ПРИНЯТО ✧</button>
+
+            <p>
+                В игре <span class="highlight">более 40 улучшений</span>,
+                система престижа, десятки питомцев, <span class="pink">достижения</span>,
+                <span class="accent">ежедневные события</span> и <span class="gold">мини-игры</span>.
+            </p>
+
+            <p>
+                А ещё — <span class="highlight">официальный саундтрек</span> от <strong>C418</strong> 🎵
+                прямо в игре! Наслаждайся культовой музыкой Minecraft во время кликов.
+            </p>
+
+            <div style="margin-top: 40px;">
+                <h2 style="font-size: 28px; margin-bottom: 16px;">📖 МИНИ-ВИКИПЕДИЯ</h2>
+
+                <div class="wiki-grid">
+
+                    <div class="wiki-block">
+                        <div class="title">🏆 ДОСТИЖЕНИЯ</div>
+                        <div class="desc">
+                            Выполняй условия и получай <strong>уникальные ачивки</strong>!
+                            <div class="wiki-tags">
+                                <span>🎯 10+ достижений</span>
+                                <span>✨ всплывают в игре</span>
+                            </div>
+                        </div>
+                        <ul class="wiki-list">
+                            <li><strong>Первый шаг</strong> — 1 клик</li>
+                            <li><strong>Тысячник</strong> — 1000 кликов</li>
+                            <li><strong>Миллионер</strong> — 1 000 000 очков</li>
+                            <li><strong>Коллекционер</strong> — 10 питомцев</li>
+                            <li><strong>Мастер престижа</strong> — 5 престижей</li>
+                            <li><strong>Игроман</strong> — 100 побед в мини-игре</li>
+                        </ul>
+                    </div>
+
+                    <div class="wiki-block">
+                        <div class="title">🎉 СОБЫТИЯ</div>
+                        <div class="desc">
+                            <strong>Ежедневные и временные ивенты</strong> с бонусами!
+                            <div class="wiki-tags">
+                                <span>🔥 Двойные очки</span>
+                                <span>🎁 Подарки</span>
+                            </div>
+                        </div>
+                        <ul class="wiki-list">
+                            <li><strong>Утренний буст</strong> — +50% с 8:00 до 10:00</li>
+                            <li><strong>Вечерний марафон</strong> — x2 с 20:00 до 22:00</li>
+                            <li><strong>Выходной бонус</strong> — +100% по субботам</li>
+                        </ul>
+                    </div>
+
+                    <div class="wiki-block">
+                        <div class="title">🎮 МИНИ-ИГРЫ</div>
+                        <div class="desc">
+                            <strong>Найди пару</strong> — тренируй память и получай очки!
+                            <div class="wiki-tags">
+                                <span>🧠 тренировка мозга</span>
+                                <span>💰 +5000 очков за победу</span>
+                            </div>
+                        </div>
+                        <ul class="wiki-list">
+                            <li><strong>Правила</strong>: открой 2 одинаковые карты</li>
+                            <li><strong>Награда</strong>: 5000 очков за победу</li>
+                            <li><strong>Сложность</strong>: 4x4 карты (8 пар)</li>
+                        </ul>
+                    </div>
+
+                    <div class="wiki-block">
+                        <div class="title">🎵 C418 — САУНДТРЕК</div>
+                        <div class="desc">
+                            В игре встроен <strong>официальный Bandcamp-плеер</strong> с музыкой C418!
+                            <div class="wiki-tags">
+                                <span>🎹 Minecraft - Volume Alpha</span>
+                                <span>🎧 8 культовых треков</span>
+                            </div>
+                        </div>
+                        <ul class="wiki-list">
+                            <li><strong>Minecraft</strong> — главная тема</li>
+                            <li><strong>Sweden</strong> — ностальгический хит</li>
+                            <li><strong>Subwoofer Lullaby</strong> — уютная мелодия</li>
+                            <li><strong>Living Mice</strong> — тёплый эмбиент</li>
+                            <li><strong>Moog City</strong> — синтезаторный трек</li>
+                            <li><strong>Haggstrom</strong> — жизнерадостный</li>
+                            <li><strong>Clark</strong> — меланхоличный</li>
+                            <li><strong>Danny</strong> — грустный и красивый</li>
+                        </ul>
+                    </div>
+
+                    <div class="wiki-block">
+                        <div class="title">🔑 СЕКРЕТНЫЕ КОДЫ</div>
+                        <div class="desc">
+                            Найди коды в <strong>Discord</strong> и получи бонусы!
+                            <br><br>
+                            <span style="color:rgba(255,255,255,0.2);font-size:12px;">🎁 Очки, бустеры и секретные награды</span>
+                        </div>
+                    </div>
+
+                    <div class="wiki-block">
+                        <div class="title">👥 СООБЩЕСТВО</div>
+                        <div class="desc">
+                            Присоединяйся к нам в <a href="https://discord.gg/QXXqzX2vV" target="_blank" style="color:#A57AFF;text-decoration:none;font-weight:600;">Discord</a>!
+                            <br>
+                            Исходный код на <a href="https://github.com/stakllzdev" target="_blank" style="color:#A57AFF;text-decoration:none;font-weight:600;">GitHub</a>.
+                        </div>
+                        <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.15);">
+                            ⭐ Удачи в покорении вселенной! ⭐
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <p style="text-align: center; margin-top: 30px; color: rgba(255,255,255,0.15); font-size: 14px;">
+                <span class="highlight">Сделано с душой.</span> Без читов и доната.
+            </p>
+
+            <a class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ Наверх</a>
         </div>
     </div>
 
-    <!-- ─── СКРИПТЫ ─── -->
-    <script>
-        // ── ЧАСТИЦЫ ──
-        const canvas = document.getElementById('particlesCanvas');
-        const ctx = canvas.getContext('2d');
-        let w, h;
-        let scrollY = 0;
-        const particles = [];
-        const COUNT = 140;
-        const COLORS = ['#825AFF','#A57AFF','#FF6B9D','#FFCD37','#46DC78','#46A5FF'];
+    <!-- ══════════════════════════════════════ -->
+    <!-- ИГРОВОЙ ЭКРАН                        -->
+    <!-- ══════════════════════════════════════ -->
+    <div id="gameScreen">
+        <div class="game-top">
+            <span class="brand">👆 CLICKER</span>
+            <div class="top-actions">
+                <button id="openPetsBtn">🐾 Питомцы</button>
+                <button id="openRewardBtn">🎁 Награда</button>
+                <button id="openCodesBtn">🔑 Код</button>
+                <button id="openAchievementsBtn">🏆 Ачивки</button>
+                <button id="openMiniGameBtn">🎮 Игра</button>
+                <button id="openMusicBtn">🎵 Музыка</button>
+                <button class="back-btn" id="backBtn">✕ Выйти</button>
+            </div>
+            <div class="stats">
+                <div>💎 <span id="gPoints">0</span></div>
+                <div>⚡ <span id="gPower">1</span></div>
+                <div>⏳ <span id="gPassive">0</span>/с</div>
+                <div>⭐ <span id="gPrestige">0</span></div>
+            </div>
+        </div>
 
-        function resize() {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
+        <div class="game-center">
+            <div class="game-points">
+                <span id="gPointsDisplay">0</span>
+                <small>очков</small>
+            </div>
+
+            <button class="game-click" id="gameClickBtn">👆</button>
+
+            <div class="game-shop">
+                <div class="game-shop-head" id="shopToggle">
+                    <h3>🏪 УЛУЧШЕНИЯ</h3>
+                    <span class="arrow" id="shopArrow">▼</span>
+                </div>
+                <div class="game-shop-body" id="shopBody">
+                    <div class="game-shop-grid" id="shopGrid"></div>
+                </div>
+            </div>
+
+            <div class="game-prestige">
+                <div class="info">⭐ <span id="gPreInfo">0</span> · бонус <span id="gPreBonus">x1.0</span> · нужно <span id="gPreCost">1 000 000</span></div>
+                <button class="prestige-btn" id="gPrestigeBtn">⭐ ПРЕСТИЖ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- МОДАЛКИ                              -->
+    <!-- ══════════════════════════════════════ -->
+
+    <!-- Питомцы -->
+    <div class="modal" id="petsModal">
+        <div class="modal-box">
+            <button class="close-modal" id="closePetsModal">✕</button>
+            <h2>🐾 ПИТОМЦЫ</h2>
+            <div class="body">
+                <button class="modal-btn" id="eggBtn">🥚 ОТКРЫТЬ ЯЙЦО (10 000)</button>
+                <div class="modal-pets-grid" id="petsGrid"></div>
+                <p style="color:rgba(255,255,255,0.2);font-size:11px;margin-top:8px;">💡 Экипируй до 3 питомцев для бонуса</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Награда -->
+    <div class="modal" id="rewardModal">
+        <div class="modal-box">
+            <button class="close-modal" id="closeRewardModal">✕</button>
+            <h2>🎁 НАГРАДА ЗА ВРЕМЯ</h2>
+            <div class="body">
+                <div class="modal-reward-box">
+                    <div class="info">⏳ через <span id="rewardTimer">5:00</span></div>
+                    <button class="claim-btn" id="claimBtn">ЗАБРАТЬ</button>
+                </div>
+                <p style="color:rgba(255,255,255,0.2);font-size:11px;">🎲 Шанс на бустер x2!</p>
+                <div style="margin-top:8px;padding:10px;background:rgba(255,215,0,0.04);border-radius:8px;border:1px solid rgba(255,215,0,0.06);">
+                    <div style="font-size:12px;color:rgba(255,255,255,0.3);">🎉 АКТИВНОЕ СОБЫТИЕ</div>
+                    <div style="font-size:13px;color:#FFD700;font-weight:600;" id="eventDisplay">Загрузка...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Коды -->
+    <div class="modal" id="codesModal">
+        <div class="modal-box">
+            <button class="close-modal" id="closeCodesModal">✕</button>
+            <h2>🔑 АКТИВАЦИЯ КОДА</h2>
+            <div class="body">
+                <div class="modal-codes-box">
+                    <input type="text" id="codeInput" placeholder="Введи секретный код..." />
+                    <button class="redeem-btn" id="redeemBtn">АКТИВИРОВАТЬ</button>
+                </div>
+                <div class="code-hint">🔍 Найди код в Discord или у разработчиков</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Достижения -->
+    <div class="modal" id="achievementsModal">
+        <div class="modal-box">
+            <button class="close-modal" id="closeAchievementsModal">✕</button>
+            <h2>🏆 ДОСТИЖЕНИЯ</h2>
+            <div class="body" id="achievementsList">
+                <!-- Рендерится скриптом -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Мини-игра -->
+    <div class="modal" id="miniGameModal">
+        <div class="modal-box">
+            <button class="close-modal" id="closeMiniGameModal">✕</button>
+            <h2>🎮 НАЙДИ ПАРУ</h2>
+            <div class="body">
+                <div class="mini-game-stats">
+                    <div>🎯 Ходов: <span id="movesCount">0</span></div>
+                    <div>✅ Пар: <span id="pairsFound">0</span>/8</div>
+                    <div>⏱️ <span id="timerDisplay">0</span>с</div>
+                </div>
+                <div class="mini-game-area" id="miniGameGrid"></div>
+                <button class="modal-btn" id="resetMiniGame" style="width:100%;">🔄 Новая игра</button>
+                <div style="margin-top:8px;font-size:11px;color:rgba(255,255,255,0.2);text-align:center;">
+                    💰 5000 очков за победу!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- МУЗЫКАЛЬНАЯ МОДАЛКА (C418)           -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="modal" id="musicModal">
+        <div class="modal-box">
+            <button class="close-modal" id="closeMusicModal">✕</button>
+            <h2>🎵 C418 — Minecraft - Volume Alpha</h2>
+            <div class="body">
+                <div class="music-player-wrapper">
+                    <!-- Официальный Bandcamp-плеер C418 -->
+                    <iframe style="border:0; width:100%; height:120px; border-radius:12px;"
+                    src="https://bandcamp.com/EmbeddedPlayer/album=1191657317/size=large/bgcol=0a0a12/linkcol=825AFF/transparent=true/"
+                    seamless>
+                    <a href="https://c418.bandcamp.com/album/minecraft-volume-alpha">Minecraft - Volume Alpha by C418</a>
+                </iframe>
+            </div>
+
+            <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.2);text-align:center;">
+                🎧 Официальный саундтрек · C418 · 2011
+            </div>
+
+            <div class="music-track-list">
+                <div class="track"><span><span class="num">01</span> Minecraft</span><span class="duration">4:14</span></div>
+                <div class="track"><span><span class="num">02</span> Sweden</span><span class="duration">3:35</span></div>
+                <div class="track"><span><span class="num">03</span> Subwoofer Lullaby</span><span class="duration">3:20</span></div>
+                <div class="track"><span><span class="num">04</span> Living Mice</span><span class="duration">3:30</span></div>
+                <div class="track"><span><span class="num">05</span> Moog City</span><span class="duration">2:40</span></div>
+                <div class="track"><span><span class="num">06</span> Haggstrom</span><span class="duration">3:24</span></div>
+                <div class="track"><span><span class="num">07</span> Clark</span><span class="duration">3:11</span></div>
+                <div class="track"><span><span class="num">08</span> Danny</span><span class="duration">4:14</span></div>
+            </div>
+
+            <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.15);text-align:center;">
+                🎵 Вся музыка принадлежит C418 · Поддержите композитора на <a href="https://c418.bandcamp.com/" target="_blank" style="color:#A57AFF;text-decoration:none;">Bandcamp</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- ТОСТ ──────────────────────────────── -->
+<!-- ══════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<script>
+    // ─── ИНИЦИАЛИЗАЦИЯ АУДИО ───
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new(window.AudioContext || window.webkitAudioContext)();
         }
-        window.addEventListener('resize', resize);
+    }
+
+    function playTone(freq, duration, type = 'sine', volume = 0.12) {
+        try {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.value = volume;
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+    }
+
+    function playClickSound() {
+        playTone(800, 0.08, 'sine', 0.07);
+        setTimeout(() => playTone(1000, 0.06, 'sine', 0.04), 50);
+    }
+
+    function playAchievementSound() {
+        playTone(523, 0.15, 'sine', 0.1);
+        setTimeout(() => playTone(659, 0.15, 'sine', 0.1), 150);
+        setTimeout(() => playTone(784, 0.2, 'sine', 0.12), 300);
+    }
+
+    function playPrestigeSound() {
+        playTone(440, 0.2, 'square', 0.08);
+        setTimeout(() => playTone(554, 0.2, 'square', 0.08), 200);
+        setTimeout(() => playTone(659, 0.3, 'square', 0.1), 400);
+    }
+
+    function playBoostSound() {
+        playTone(600, 0.1, 'sine', 0.08);
+        setTimeout(() => playTone(900, 0.1, 'sine', 0.08), 100);
+        setTimeout(() => playTone(1200, 0.15, 'sine', 0.1), 200);
+    }
+
+    function playWinSound() {
+        playTone(523, 0.12, 'sine', 0.08);
+        setTimeout(() => playTone(659, 0.12, 'sine', 0.08), 120);
+        setTimeout(() => playTone(784, 0.12, 'sine', 0.08), 240);
+        setTimeout(() => playTone(1047, 0.25, 'sine', 0.12), 360);
+    }
+
+    // ─── ЧАСТИЦЫ ───
+    const canvas = document.getElementById('particlesCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    const particles = [];
+    const COUNT = 130;
+    const COLORS = ['#825AFF', '#A57AFF', '#FF6B9D', '#FFCD37', '#46DC78', '#46A5FF'];
+
+    function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * w;
+            this.y = Math.random() * h;
+            this.size = Math.random() * 3 + 1.5;
+            this.speedX = (Math.random() - 0.5) * 0.7;
+            this.speedY = (Math.random() - 0.5) * 0.7;
+            this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+            this.alpha = Math.random() * 0.5 + 0.3;
+            this.pulse = Math.random() * Math.PI * 2;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.pulse += 0.02;
+            if (this.x < 0) this.x = w;
+            if (this.x > w) this.x = 0;
+            if (this.y < 0) this.y = h;
+            if (this.y > h) this.y = 0;
+            this.currentSize = this.size + Math.sin(this.pulse) * 0.6;
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, Math.max(0.5, this.currentSize), 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.alpha + Math.sin(this.pulse) * 0.15;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+
+    function drawLines() {
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = '#825AFF';
+                    ctx.globalAlpha = 0.08 * (1 - dist / 120);
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.globalAlpha = 1;
+                }
+            }
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => { p.update(); p.draw(); });
+        drawLines();
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
         resize();
+        particles.forEach(p => {
+            p.x = Math.random() * w;
+            p.y = Math.random() * h;
+        });
+    });
 
-        class Particle {
-            constructor() {
-                this.reset();
-                this.parallaxFactor = 0.2 + Math.random() * 0.6;
-                this.angle = Math.random() * Math.PI * 2;
-                this.speed = 0.05 + Math.random() * 0.2;
+    // ─── ПЛАВНЫЙ СКРОЛЛ ───
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
             }
-            reset() {
-                this.x = Math.random() * w;
-                this.y = Math.random() * h;
-                this.size = Math.random() * 2.5 + 1;
-                this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
-                this.alpha = Math.random() * 0.4 + 0.2;
-                this.pulse = Math.random() * Math.PI * 2;
-                this.pulseSpeed = 0.01 + Math.random() * 0.02;
-                this.baseX = this.x;
-                this.baseY = this.y;
-            }
-            update(scrollOffset) {
-                this.angle += this.speed * 0.005;
-                const driftX = Math.sin(this.angle) * 0.3;
-                const driftY = Math.cos(this.angle * 0.7) * 0.3;
-                const parallaxOffset = scrollOffset * this.parallaxFactor * 0.1;
-                this.x = this.baseX + driftX + parallaxOffset * (this.x / w - 0.5);
-                this.y = this.baseY + driftY + parallaxOffset * (this.y / h - 0.5) * 0.5;
-                this.pulse += this.pulseSpeed;
-                this.currentSize = this.size + Math.sin(this.pulse) * 0.4;
-                this.currentAlpha = this.alpha + Math.sin(this.pulse * 0.7) * 0.1;
-                if (this.x < -50) { this.x = w + 50; this.baseX = this.x; }
-                if (this.x > w + 50) { this.x = -50; this.baseX = this.x; }
-                if (this.y < -50) { this.y = h + 50; this.baseY = this.y; }
-                if (this.y > h + 50) { this.y = -50; this.baseY = this.y; }
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, Math.max(0.3, this.currentSize), 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = Math.max(0.05, Math.min(0.8, this.currentAlpha));
-                ctx.fill();
-                ctx.globalAlpha = 1;
+        });
+    });
+
+    // ─── ТОСТ ───
+    const toastEl = document.getElementById('toast');
+    let toastTimeout;
+
+    function showToast(msg, type = 'info') {
+        toastEl.textContent = msg;
+        toastEl.className = 'toast show';
+        toastEl.style.background = type === 'error' ? 'rgba(255,60,60,0.9)' :
+            type === 'info' ? 'rgba(130,90,255,0.9)' :
+            'rgba(70,220,120,0.9)';
+        toastEl.style.color = type === 'error' || type === 'info' ? '#fff' : '#0a0a12';
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toastEl.classList.remove('show');
+        }, 3000);
+    }
+
+    // ─── АЧИВКИ ───
+    let achievements = {
+        firstClick: { name: '👣 Первый шаг', desc: 'Сделать первый клик', unlocked: false, icon: '👣' },
+        thousandClicks: { name: '📈 Тысячник', desc: '1000 кликов', unlocked: false, icon: '📈' },
+        millionPoints: { name: '💎 Миллионер', desc: '1 000 000 очков', unlocked: false, icon: '💎' },
+        collector: { name: '🐾 Коллекционер', desc: '10 питомцев', unlocked: false, icon: '🐾' },
+        prestigeMaster: { name: '⭐ Мастер престижа', desc: '5 престижей', unlocked: false, icon: '⭐' },
+        gamer: { name: '🎮 Игроман', desc: '100 побед в мини-игре', unlocked: false, icon: '🎮' },
+        critMaster: { name: '⚡ Критический удар', desc: '50 критических ударов', unlocked: false, icon: '⚡' },
+        petCollector: { name: '🌟 Легендарный коллекционер', desc: 'Все редкие питомцы', unlocked: false,
+        icon: '🌟' },
+    };
+
+    let miniGameWins = 0;
+    let totalCrits = 0;
+
+    function unlockAchievement(id) {
+        if (achievements[id] && !achievements[id].unlocked) {
+            achievements[id].unlocked = true;
+            playAchievementSound();
+            const popup = document.getElementById('achievementPopup');
+            document.getElementById('achIcon').textContent = achievements[id].icon;
+            document.getElementById('achTitle').textContent = '🏆 ' + achievements[id].name;
+            document.getElementById('achDesc').textContent = achievements[id].desc;
+            popup.classList.add('show');
+            showToast('🏆 Достижение: ' + achievements[id].name + '!', 'info');
+            setTimeout(() => popup.classList.remove('show'), 4000);
+            saveGame();
+        }
+    }
+
+    function checkAchievements() {
+        if (totalClicks >= 1) unlockAchievement('firstClick');
+        if (totalClicks >= 1000) unlockAchievement('thousandClicks');
+        if (points >= 1000000) unlockAchievement('millionPoints');
+        if (pets.length >= 10) unlockAchievement('collector');
+        if (prestigeLevel >= 5) unlockAchievement('prestigeMaster');
+        if (miniGameWins >= 100) unlockAchievement('gamer');
+        if (totalCrits >= 50) unlockAchievement('critMaster');
+        const rarePets = pets.filter(p => p.rarity === 'legendary' || p.rarity === 'divine' || p.rarity === 'secret');
+        if (rarePets.length >= 3) unlockAchievement('petCollector');
+    }
+
+    function renderAchievements() {
+        const list = document.getElementById('achievementsList');
+        list.innerHTML = '';
+        for (const [id, ach] of Object.entries(achievements)) {
+            const div = document.createElement('div');
+            div.style.cssText = `
+                        display:flex; align-items:center; gap:12px;
+                        padding:10px 12px; margin-bottom:6px;
+                        background:${ach.unlocked ? 'rgba(70,220,120,0.08)' : 'rgba(255,255,255,0.02)'};
+                        border-radius:10px;
+                        border:1px solid ${ach.unlocked ? 'rgba(70,220,120,0.15)' : 'rgba(255,255,255,0.04)'};
+                        transition:0.2s;
+                    `;
+            div.innerHTML = `
+                        <span style="font-size:24px;">${ach.unlocked ? ach.icon : '🔒'}</span>
+                        <div style="flex:1;">
+                            <div style="font-weight:600;font-size:14px;color:${ach.unlocked ? '#46DC78' : 'rgba(255,255,255,0.4)'};">${ach.unlocked ? '✅ ' : ''}${ach.name}</div>
+                            <div style="font-size:11px;color:rgba(255,255,255,0.3);">${ach.desc}</div>
+                        </div>
+                        <span style="font-size:12px;color:${ach.unlocked ? '#46DC78' : 'rgba(255,255,255,0.15)'};">${ach.unlocked ? '✓' : '⏳'}</span>
+                    `;
+            list.appendChild(div);
+        }
+    }
+
+    // ─── СОБЫТИЯ ───
+    function getActiveEvent() {
+        const now = new Date();
+        const hour = now.getHours();
+        const day = now.getDay();
+
+        if (hour >= 8 && hour < 10) {
+            return { name: '☀️ Утренний буст', bonus: 1.5, desc: '+50% очков с 8:00 до 10:00' };
+        }
+        if (hour >= 20 && hour < 22) {
+            return { name: '🌙 Вечерний марафон', bonus: 2, desc: 'x2 очков с 20:00 до 22:00' };
+        }
+        if (day === 6 || day === 0) {
+            return { name: '🎉 Выходной бонус', bonus: 2, desc: 'x2 очков по выходным!' };
+        }
+        return { name: '📅 Обычный день', bonus: 1, desc: 'Стандартные очки' };
+    }
+
+    let currentEvent = getActiveEvent();
+
+    function updateEventDisplay() {
+        currentEvent = getActiveEvent();
+        const el = document.getElementById('eventDisplay');
+        if (el) {
+            el.textContent = `${currentEvent.name} — ${currentEvent.desc}`;
+            if (currentEvent.bonus > 1) {
+                el.style.color = '#FFD700';
+            } else {
+                el.style.color = 'rgba(255,255,255,0.5)';
             }
         }
+    }
 
-        for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+    // ─── ИГРОВАЯ ЛОГИКА ───
+    let points = 0;
+    let prestigeLevel = 0;
+    let prestigeBonus = 1;
+    let totalClicks = 0;
 
-        function drawLines() {
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = '#825AFF';
-                        ctx.globalAlpha = 0.04 * (1 - dist / 120) * (0.5 + Math.sin(Date.now() / 3000 + i) * 0.5);
-                        ctx.lineWidth = 0.6;
-                        ctx.stroke();
-                        ctx.globalAlpha = 1;
-                    }
+    let pets = [];
+    let equippedPets = [];
+    const MAX_EQUIPPED = 3;
+
+    const PET_RARITIES = [
+        { id: 'common', name: 'Обычный', color: '#aaaabc', mult: 0.2 },
+        { id: 'rare', name: 'Редкий', color: '#50a0ff', mult: 0.5 },
+        { id: 'epic', name: 'Эпический', color: '#aa50ff', mult: 1.2 },
+        { id: 'mythic', name: 'Мифический', color: '#ff3c5a', mult: 3.0 },
+        { id: 'legendary', name: 'Легендарный', color: '#ffc828', mult: 7.0 },
+        { id: 'divine', name: 'Божественный', color: '#ffffff', mult: 15.0 },
+        { id: 'secret', name: 'Секретный', color: '#ff0096', mult: 40.0 },
+    ];
+
+    const PET_SPECIES = {
+        common: [{ name: 'Котёнок', icon: '🐱' }, { name: 'Щенок', icon: '🐶' }, { name: 'Кролик', icon: '🐰' }],
+        rare: [{ name: 'Лиса', icon: '🦊' }, { name: 'Сова', icon: '🦉' }, { name: 'Енот', icon: '🦝' }],
+        epic: [{ name: 'Волк', icon: '🐺' }, { name: 'Тигр', icon: '🐯' }, { name: 'Орёл', icon: '🦅' }],
+        mythic: [{ name: 'Дракончик', icon: '🐉' }, { name: 'Феникс', icon: '🔥' }, { name: 'Единорог', icon: '🦄' }],
+        legendary: [{ name: 'Кракен', icon: '🐙' }, { name: 'Грифон', icon: '🦁' }, { name: 'Левиафан', icon: '🐳' }],
+        divine: [{ name: 'Ангел', icon: '👼' }, { name: 'Серафим', icon: '😇' }, { name: 'Титан', icon: '⚡' }],
+        secret: [{ name: 'Аномалия', icon: '👁' }, { name: 'Пустота', icon: '🌌' }, { name: 'Сингулярность', icon: '🕳' }],
+    };
+
+    const CODES = {
+        'WELCOME': { points: 5000, desc: 'Стартовый бонус!' },
+        'CLICKMASTER': { points: 25000, desc: 'Ты мастер кликов!' },
+        'BOOST100': { points: 0, mult: 2, desc: 'Буст x2 на 5 минут!' },
+        'RICHLIFE': { points: 100000, desc: 'Богатая жизнь!' },
+        'DARKNESS': { points: 50000, desc: 'Из тьмы — свет!' },
+        'SCIFI2077': { points: 75000, desc: 'Будущее уже здесь!' },
+        'NATURE': { points: 30000, desc: 'Сила природы!' },
+        'LEGEND': { points: 500000, desc: 'Только для легенд!' },
+        'DEVELOPER': { points: 1000000, desc: 'Секретный код!' },
+    };
+    let usedCodes = [];
+
+    let rewardTimer = 300;
+    let rewardReady = false;
+    let rewardPoints = 0;
+    let boostMult = 1;
+    let boostTimer = 0;
+
+    const UPGRADES = [
+        { id: 'multiplier', name: 'Множитель', icon: '✦', effect: 'multiplier', value: 1, baseCost: 50, costMult: 2.5 },
+        { id: 'autoclicker', name: 'Автокликер', icon: '◎', effect: 'passive', value: 1, baseCost: 100, costMult: 2.0 },
+        { id: 'critchance', name: 'Крит', icon: '⚡', effect: 'crit', value: 0.05, baseCost: 200, costMult: 3.0 },
+        { id: 'megaclick', name: 'Мегаклик', icon: '◆', effect: 'perclick', value: 2, baseCost: 500, costMult: 2.2 },
+        { id: 'dragonbreath', name: 'Дракон', icon: '🐉', effect: 'perclick', value: 10, baseCost: 2000, costMult: 2.6 },
+    ];
+
+    let upgrades = {};
+    UPGRADES.forEach(u => upgrades[u.id] = 0);
+
+    // DOM
+    const heroPoints = document.getElementById('heroPoints');
+    const heroPower = document.getElementById('heroPower');
+    const heroPassive = document.getElementById('heroPassive');
+    const heroPrestige = document.getElementById('heroPrestige');
+
+    const gPoints = document.getElementById('gPoints');
+    const gPower = document.getElementById('gPower');
+    const gPassive = document.getElementById('gPassive');
+    const gPrestige = document.getElementById('gPrestige');
+    const gPointsDisplay = document.getElementById('gPointsDisplay');
+    const gPreInfo = document.getElementById('gPreInfo');
+    const gPreBonus = document.getElementById('gPreBonus');
+    const gPreCost = document.getElementById('gPreCost');
+    const shopGrid = document.getElementById('shopGrid');
+    const petsGrid = document.getElementById('petsGrid');
+    const rewardTimerEl = document.getElementById('rewardTimer');
+    const claimBtn = document.getElementById('claimBtn');
+
+    function fmt(n) {
+        if (n >= 1e9) return (n / 1e9).toFixed(1) + 'Млрд';
+        if (n >= 1e6) return (n / 1e6).toFixed(1) + 'Млн';
+        if (n >= 1e3) return (n / 1e3).toFixed(1) + 'Тыс';
+        return Math.floor(n).toString();
+    }
+
+    function getRarity(id) { return PET_RARITIES.find(r => r.id === id) || PET_RARITIES[0]; }
+
+    function getPetBonus() {
+        let total = 0;
+        for (let i = 0; i < equippedPets.length; i++) {
+            total += getRarity(pets[equippedPets[i]].rarity).mult;
+        }
+        return total;
+    }
+
+    function getMultiplier() {
+        let mult = 1;
+        UPGRADES.forEach(u => {
+            if (u.effect === 'multiplier') mult += upgrades[u.id] * u.value;
+        });
+        mult += getPetBonus();
+        mult *= prestigeBonus;
+        return mult;
+    }
+
+    function getPerClick() {
+        let base = 1;
+        UPGRADES.forEach(u => {
+            if (u.effect === 'perclick') base += upgrades[u.id] * u.value;
+        });
+        return base * getMultiplier();
+    }
+
+    function getPassive() {
+        let base = 0;
+        UPGRADES.forEach(u => {
+            if (u.effect === 'passive') base += upgrades[u.id] * u.value;
+        });
+        return base * getMultiplier();
+    }
+
+    function getCritChance() {
+        let chance = 0;
+        UPGRADES.forEach(u => {
+            if (u.effect === 'crit') chance += upgrades[u.id] * u.value;
+        });
+        return Math.min(chance, 0.95);
+    }
+
+    function getPrestigeCost() {
+        return Math.floor(1000000 * Math.pow(3, prestigeLevel));
+    }
+
+    function getEventBonus() {
+        currentEvent = getActiveEvent();
+        return currentEvent.bonus;
+    }
+
+    function saveGame() {
+        try {
+            localStorage.setItem('clickerSave', JSON.stringify({
+                points, prestigeLevel, prestigeBonus, totalClicks, totalCrits,
+                upgrades, pets, equippedPets, usedCodes,
+                rewardTimer, rewardReady, rewardPoints, boostMult, boostTimer,
+                achievements, miniGameWins
+            }));
+        } catch (e) {}
+    }
+
+    function loadGame() {
+        try {
+            const raw = localStorage.getItem('clickerSave');
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            points = data.points || 0;
+            prestigeLevel = data.prestigeLevel || 0;
+            prestigeBonus = data.prestigeBonus || 1;
+            totalClicks = data.totalClicks || 0;
+            totalCrits = data.totalCrits || 0;
+            if (data.upgrades) {
+                UPGRADES.forEach(u => {
+                    upgrades[u.id] = data.upgrades[u.id] || 0;
+                });
+            }
+            pets = data.pets || [];
+            equippedPets = data.equippedPets || [];
+            usedCodes = data.usedCodes || [];
+            rewardTimer = data.rewardTimer || 300;
+            rewardReady = data.rewardReady || false;
+            rewardPoints = data.rewardPoints || 0;
+            boostMult = data.boostMult || 1;
+            boostTimer = data.boostTimer || 0;
+            if (data.achievements) {
+                for (const [id, val] of Object.entries(data.achievements)) {
+                    if (achievements[id]) achievements[id].unlocked = val.unlocked;
                 }
             }
+            miniGameWins = data.miniGameWins || 0;
+            updateUI();
+            renderPets();
+            updateReward();
+            renderAchievements();
+            updateEventDisplay();
+        } catch (e) {}
+    }
+
+    function updateUI() {
+        const perClick = getPerClick();
+        const passive = getPassive();
+        const cost = getPrestigeCost();
+        const eventBonus = getEventBonus();
+
+        const displayPoints = Math.floor(points * eventBonus);
+
+        heroPoints.textContent = fmt(displayPoints);
+        heroPower.textContent = fmt(perClick * eventBonus);
+        heroPassive.textContent = fmt(passive * eventBonus);
+        heroPrestige.textContent = prestigeLevel;
+
+        gPoints.textContent = fmt(displayPoints);
+        gPower.textContent = fmt(perClick * eventBonus);
+        gPassive.textContent = fmt(passive * eventBonus);
+        gPrestige.textContent = prestigeLevel;
+
+        const old = gPointsDisplay.textContent;
+        gPointsDisplay.textContent = fmt(displayPoints);
+        if (old !== gPointsDisplay.textContent) {
+            gPointsDisplay.classList.remove('bump');
+            void gPointsDisplay.offsetWidth;
+            gPointsDisplay.classList.add('bump');
         }
 
-        function animate() {
-            ctx.clearRect(0, 0, w, h);
-            particles.forEach(p => { p.update(scrollY); p.draw(); });
-            drawLines();
-            requestAnimationFrame(animate);
+        gPreInfo.textContent = prestigeLevel;
+        gPreBonus.textContent = 'x' + prestigeBonus.toFixed(1);
+        gPreCost.textContent = fmt(cost);
+
+        const pb = document.getElementById('gPrestigeBtn');
+        if (points >= cost) {
+            pb.disabled = false;
+            pb.textContent = '⭐ ПРЕСТИЖ';
+        } else {
+            pb.disabled = true;
+            pb.textContent = '⭐ Нужно ' + fmt(cost);
         }
-        animate();
 
-        window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
-        window.addEventListener('resize', () => {
-            resize();
-            particles.forEach(p => {
-                p.baseX = p.x = Math.random() * w;
-                p.baseY = p.y = Math.random() * h;
+        renderShop();
+        updateReward();
+        updateEventDisplay();
+        checkAchievements();
+        saveGame();
+    }
+
+    function renderShop() {
+        shopGrid.innerHTML = '';
+        UPGRADES.forEach(u => {
+            const level = upgrades[u.id] || 0;
+            const cost = Math.floor(u.baseCost * Math.pow(u.costMult, level));
+            const canBuy = points >= cost;
+
+            const div = document.createElement('div');
+            div.className = 'game-shop-item';
+            const btnClass = canBuy ? 'ok' : 'no';
+            div.innerHTML = `
+                        <div class="name">${u.icon} ${u.name}</div>
+                        <div class="effect">+${u.value} ${u.effect === 'multiplier' ? '×' : u.effect === 'passive' ? 'пасс/с' : u.effect === 'crit' ? '%' : 'за клик'}</div>
+                        <div class="cost">💰 ${fmt(cost)}</div>
+                        <div class="level">УР ${level}</div>
+                        <button class="buy-btn ${btnClass}" ${canBuy ? '' : 'disabled'}>
+                            ${canBuy ? 'КУПИТЬ ✅' : '❌'}
+                            <span class="sub">${canBuy ? 'доступно' : 'нужно ' + fmt(cost - points)}</span>
+                        </button>
+                    `;
+            const btn = div.querySelector('.buy-btn');
+            btn.addEventListener('click', () => {
+                const costNow = Math.floor(u.baseCost * Math.pow(u.costMult, upgrades[u.id] || 0));
+                if (points >= costNow) {
+                    points -= costNow;
+                    upgrades[u.id] = (upgrades[u.id] || 0) + 1;
+                    playClickSound();
+                    showToast(`✅ ${u.name} улучшен до ${upgrades[u.id]} уровня!`, 'success');
+                    updateUI();
+                } else {
+                    showToast(`❌ Не хватает ${fmt(costNow - points)} очков`, 'error');
+                }
             });
+            shopGrid.appendChild(div);
         });
+    }
 
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
+    function renderPets() {
+        petsGrid.innerHTML = '';
+        if (pets.length === 0) {
+            petsGrid.innerHTML =
+                '<div style="color:rgba(255,255,255,0.2);font-size:12px;grid-column:1/-1;text-align:center;padding:12px;">Нет питомцев 🥚</div>';
+            return;
+        }
+        for (let i = 0; i < pets.length; i++) {
+            const pet = pets[i];
+            const r = getRarity(pet.rarity);
+            const isEq = equippedPets.includes(i);
+
+            const div = document.createElement('div');
+            div.className = 'modal-pet' + (isEq ? ' eq' : '');
+            div.innerHTML = `
+                        <div class="icon">${pet.icon}</div>
+                        <div class="name">${pet.name}</div>
+                        <div class="rarity" style="color:${r.color}">${r.name}</div>
+                        <div class="bonus">+${r.mult}</div>
+                        <button class="eq-btn ${isEq ? 'off' : 'on'}">${isEq ? 'СНЯТЬ' : 'НАДЕТЬ'}</button>
+                    `;
+            const btn = div.querySelector('.eq-btn');
+            btn.addEventListener('click', () => {
+                if (isEq) {
+                    equippedPets = equippedPets.filter(idx => idx !== i);
+                    showToast('❌ Питомец снят', 'success');
+                } else {
+                    if (equippedPets.length >= MAX_EQUIPPED) {
+                        showToast('❌ Максимум ' + MAX_EQUIPPED + ' питомцев!', 'error');
+                        return;
+                    }
+                    equippedPets.push(i);
+                    showToast('✅ ' + pet.name + ' экипирован!', 'success');
+                }
+                renderPets();
+                updateUI();
             });
+            petsGrid.appendChild(div);
+        }
+    }
+
+    function updateReward() {
+        const mins = Math.floor(rewardTimer / 60);
+        const secs = Math.floor(rewardTimer % 60);
+        rewardTimerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+        if (rewardReady) {
+            claimBtn.disabled = false;
+            claimBtn.textContent = '🎁 ЗАБРАТЬ (+' + fmt(rewardPoints) + ')';
+        } else {
+            claimBtn.disabled = true;
+            claimBtn.textContent = '⏳ ' + Math.floor(rewardTimer) + 'с';
+        }
+    }
+
+    // ─── ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ───
+    const mainScreen = document.getElementById('mainScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const heroSection = document.getElementById('heroSection');
+    const infoSection = document.getElementById('info');
+
+    document.getElementById('playBtn').addEventListener('click', function() {
+        heroSection.classList.add('hidden');
+        infoSection.classList.add('hidden');
+        gameScreen.classList.add('active');
+        loadGame();
+        setTimeout(() => {
+            showToast('🚀 Добро пожаловать в игру! Кликай!', 'info');
+            playClickSound();
+        }, 400);
+    });
+
+    document.getElementById('backBtn').addEventListener('click', function() {
+        gameScreen.classList.remove('active');
+        heroSection.classList.remove('hidden');
+        infoSection.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast('👋 Возвращайся скорее!', 'info');
+    });
+
+    // ─── КЛИК ───
+    document.getElementById('gameClickBtn').addEventListener('click', function(e) {
+        const perClick = getPerClick();
+        const eventBonus = getEventBonus();
+        let earned = perClick * boostMult * eventBonus;
+        let isCrit = false;
+
+        if (Math.random() < getCritChance()) {
+            earned *= 10;
+            isCrit = true;
+            totalCrits++;
+        }
+
+        points += earned;
+        totalClicks++;
+        playClickSound();
+        updateUI();
+
+        this.style.transform = 'scale(0.88)';
+        setTimeout(() => { this.style.transform = ''; }, 150);
+
+        const rect = this.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const emojis = ['✨', '💫', '⚡', '🌟'];
+        for (let i = 0; i < 8; i++) {
+            const el = document.createElement('div');
+            el.className = 'click-pop';
+            el.textContent = isCrit ? '💥' : emojis[Math.floor(Math.random() * emojis.length)];
+            el.style.left = (cx + (Math.random() - 0.5) * 100) + 'px';
+            el.style.top = (cy + (Math.random() - 0.5) * 100) + 'px';
+            el.style.fontSize = (isCrit ? 32 : 16 + Math.random() * 18) + 'px';
+            el.style.color = isCrit ? '#FF6B6B' : '#A57AFF';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
+        if (isCrit) {
+            showToast('💥 КРИТ! ×10 урона!', 'success');
+        }
+    });
+
+    // ─── ПРЕСТИЖ ───
+    document.getElementById('gPrestigeBtn').addEventListener('click', function() {
+        const cost = getPrestigeCost();
+        if (points < cost) {
+            showToast(`❌ Нужно ${fmt(cost)} очков для престижа`, 'error');
+            return;
+        }
+        points = 0;
+        prestigeLevel++;
+        prestigeBonus = 1 + prestigeLevel * 0.5;
+        UPGRADES.forEach(u => upgrades[u.id] = 0);
+        pets = [];
+        equippedPets = [];
+        rewardTimer = 300;
+        rewardReady = false;
+        rewardPoints = 0;
+        playPrestigeSound();
+        showToast(`⭐ ПРЕСТИЖ! Уровень ${prestigeLevel}! x${prestigeBonus.toFixed(1)}`, 'success');
+        updateUI();
+        renderPets();
+        saveGame();
+    });
+
+    // ─── МАГАЗИН ТОГГЛ ───
+    let shopOpen = true;
+    document.getElementById('shopToggle').addEventListener('click', () => {
+        shopOpen = !shopOpen;
+        document.getElementById('shopBody').classList.toggle('open');
+        document.getElementById('shopArrow').classList.toggle('open');
+    });
+    document.getElementById('shopBody').classList.add('open');
+
+    // ─── МОДАЛКИ ───
+    function openModal(m) { m.classList.add('active'); }
+
+    function closeModal(m) { m.classList.remove('active'); }
+
+    document.getElementById('openPetsBtn').addEventListener('click', () => { openModal(document.getElementById('petsModal'));
+        renderPets(); });
+    document.getElementById('closePetsModal').addEventListener('click', () => closeModal(document.getElementById('petsModal')));
+    document.getElementById('openRewardBtn').addEventListener('click', () => { openModal(document.getElementById('rewardModal'));
+        updateReward();
+        updateEventDisplay(); });
+    document.getElementById('closeRewardModal').addEventListener('click', () => closeModal(document.getElementById(
+        'rewardModal')));
+    document.getElementById('openCodesBtn').addEventListener('click', () => openModal(document.getElementById('codesModal')));
+    document.getElementById('closeCodesModal').addEventListener('click', () => closeModal(document.getElementById(
+        'codesModal')));
+
+    document.getElementById('openAchievementsBtn').addEventListener('click', () => {
+        openModal(document.getElementById('achievementsModal'));
+        renderAchievements();
+    });
+    document.getElementById('closeAchievementsModal').addEventListener('click', () => closeModal(document.getElementById(
+        'achievementsModal')));
+
+    document.getElementById('openMiniGameBtn').addEventListener('click', () => {
+        openModal(document.getElementById('miniGameModal'));
+        initMiniGame();
+    });
+    document.getElementById('closeMiniGameModal').addEventListener('click', () => closeModal(document.getElementById(
+        'miniGameModal')));
+
+    // ─── МУЗЫКАЛЬНАЯ МОДАЛКА ───
+    document.getElementById('openMusicBtn').addEventListener('click', () => {
+        openModal(document.getElementById('musicModal'));
+    });
+    document.getElementById('closeMusicModal').addEventListener('click', () => closeModal(document.getElementById(
+        'musicModal')));
+
+    // Кнопка с нотой на главном экране тоже открывает музыку
+    document.getElementById('musicControl').addEventListener('click', () => {
+        // Проверяем, открыта ли игра
+        if (gameScreen.classList.contains('active')) {
+            openModal(document.getElementById('musicModal'));
+        } else {
+            // Если на главном экране — просто прокручиваем к википедии
+            document.getElementById('info').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                showToast('🎵 Нажми "ИГРАТЬ", а затем кнопку "Музыка" в игре!', 'info');
+            }, 500);
+        }
+    });
+
+    [document.getElementById('petsModal'), document.getElementById('rewardModal'), document.getElementById('codesModal'),
+        document.getElementById('achievementsModal'), document.getElementById('miniGameModal'),
+        document.getElementById('musicModal')
+    ].forEach(m => {
+        m.addEventListener('click', (e) => { if (e.target === m) closeModal(m); });
+    });
+
+    // ─── ЯЙЦО ───
+    document.getElementById('eggBtn').addEventListener('click', () => {
+        const cost = 10000 + pets.length * 5000;
+        if (points < cost) {
+            showToast(`❌ Нужно ${fmt(cost - points)} очков для яйца`, 'error');
+            return;
+        }
+        points -= cost;
+
+        const roll = Math.random() * 100;
+        let rarityId = 'common';
+        if (roll < 0.5) rarityId = 'secret';
+        else if (roll < 2) rarityId = 'divine';
+        else if (roll < 6) rarityId = 'legendary';
+        else if (roll < 15) rarityId = 'mythic';
+        else if (roll < 35) rarityId = 'epic';
+        else if (roll < 65) rarityId = 'rare';
+
+        const species = PET_SPECIES[rarityId];
+        const pick = species[Math.floor(Math.random() * species.length)];
+        const newPet = { name: pick.name, icon: pick.icon, rarity: rarityId };
+        pets.push(newPet);
+
+        const r = getRarity(rarityId);
+        playClickSound();
+        showToast(`🥚 ${r.name} питомец: ${pick.icon} ${pick.name}!`, 'success');
+        if (rarityId === 'secret') {
+            setTimeout(() => {
+                showToast('🌟 СЕКРЕТНЫЙ! Ты легенда!', 'success');
+                playAchievementSound();
+            }, 800);
+        }
+        renderPets();
+        updateUI();
+    });
+
+    // ─── НАГРАДА ───
+    document.getElementById('claimBtn').addEventListener('click', () => {
+        if (!rewardReady) {
+            showToast('❌ Награда ещё не готова', 'error');
+            return;
+        }
+        points += rewardPoints;
+        rewardReady = false;
+        rewardPoints = 0;
+        rewardTimer = 300;
+        playBoostSound();
+        showToast(`🎁 +${fmt(rewardPoints)} очков!`, 'success');
+        if (Math.random() < 0.3) {
+            boostMult = 2;
+            boostTimer = 30;
+            playBoostSound();
+            showToast('⚡ БУСТЕР x2 на 30 сек!', 'success');
+        }
+        updateUI();
+        updateReward();
+    });
+
+    // ─── КОДЫ ───
+    document.getElementById('redeemBtn').addEventListener('click', () => {
+        const input = document.getElementById('codeInput');
+        const code = input.value.toUpperCase().trim();
+        if (!code) { showToast('❌ Введи код', 'error'); return; }
+        if (usedCodes.includes(code)) { showToast('❌ Код уже использован', 'error'); return; }
+
+        const data = CODES[code];
+        if (!data) { showToast('❌ Неверный код', 'error'); return; }
+
+        usedCodes.push(code);
+        if (data.points) {
+            points += data.points;
+            playBoostSound();
+            showToast(`✅ +${fmt(data.points)} очков!`, 'success');
+        }
+        if (data.mult) {
+            boostMult = data.mult;
+            boostTimer = data.mult === 2 ? 300 : 180;
+            playBoostSound();
+            showToast(`✅ Бустер x${data.mult} активирован!`, 'success');
+        }
+        input.value = '';
+        updateUI();
+        saveGame();
+    });
+
+    document.getElementById('codeInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById('redeemBtn').click();
+    });
+
+    // ─── МИНИ-ИГРА ───
+    let miniGameCards = [];
+    let selectedCards = [];
+    let matchedPairs = 0;
+    let moves = 0;
+    let timer = 0;
+    let timerInterval = null;
+    let isGameFinished = false;
+
+    const emojis = ['🍎', '🍋', '🍇', '🍉', '🍒', '🍑', '🍓', '🥝'];
+
+    function initMiniGame() {
+        document.getElementById('movesCount').textContent = '0';
+        document.getElementById('pairsFound').textContent = '0/8';
+        document.getElementById('timerDisplay').textContent = '0';
+        moves = 0;
+        matchedPairs = 0;
+        selectedCards = [];
+        isGameFinished = false;
+        clearInterval(timerInterval);
+        timer = 0;
+        timerInterval = setInterval(() => {
+            timer++;
+            document.getElementById('timerDisplay').textContent = timer;
+        }, 1000);
+
+        const deck = [...emojis, ...emojis];
+        for (let i = deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        miniGameCards = deck.map((emoji, index) => ({
+            id: index,
+            emoji: emoji,
+            flipped: false,
+            matched: false
+        }));
+
+        renderMiniGame();
+    }
+
+    function renderMiniGame() {
+        const grid = document.getElementById('miniGameGrid');
+        grid.innerHTML = '';
+        miniGameCards.forEach((card, index) => {
+            const div = document.createElement('div');
+            div.className = 'mini-game-card';
+            if (card.matched) {
+                div.classList.add('matched');
+                div.textContent = card.emoji;
+            } else if (card.flipped) {
+                div.classList.add('selected');
+                div.textContent = card.emoji;
+            } else {
+                div.textContent = '❓';
+            }
+            div.dataset.index = index;
+            div.addEventListener('click', () => handleCardClick(index));
+            grid.appendChild(div);
         });
+    }
 
-        // ── RIPPLЕ-ЭФФЕКТ ──
-        document.getElementById('mainBtn').addEventListener('click', function(e) {
-            const rect = this.getBoundingClientRect();
-            const ripple = document.createElement('span');
-            const size = Math.max(rect.width, rect.height);
-            ripple.style.cssText = `
-                position: absolute; border-radius: 50%;
-                background: rgba(255,255,255,0.4);
-                width: ${size}px; height: ${size}px;
-                left: ${e.clientX - rect.left - size/2}px;
-                top: ${e.clientY - rect.top - size/2}px;
-                transform: scale(0);
-                animation: rippleAnim 0.7s ease-out forwards;
-                pointer-events: none; z-index: 10;
-            `;
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 800);
-        });
+    function handleCardClick(index) {
+        if (isGameFinished) return;
+        const card = miniGameCards[index];
+        if (card.matched || card.flipped || selectedCards.length >= 2) return;
 
-        // ── ПАСХАЛКА 1: ДЕННИ (10 кликов по логотипу) ──
-        (function() {
-            const logo = document.getElementById('clickerLogo');
-            const overlay = document.getElementById('dennyOverlay');
-            const closeBtn = document.getElementById('dennyClose');
-            let clickCount = 0;
-            let lastClickTime = 0;
+        card.flipped = true;
+        selectedCards.push(index);
+        renderMiniGame();
 
-            logo.addEventListener('click', function(e) {
-                const now = Date.now();
-                if (now - lastClickTime > 1000) clickCount = 0;
-                clickCount++;
-                lastClickTime = now;
-                logo.style.transform = 'scale(0.92)';
-                setTimeout(() => { logo.style.transform = ''; }, 150);
+        if (selectedCards.length === 2) {
+            moves++;
+            document.getElementById('movesCount').textContent = moves;
+            const idx1 = selectedCards[0];
+            const idx2 = selectedCards[1];
+            const card1 = miniGameCards[idx1];
+            const card2 = miniGameCards[idx2];
 
-                if (clickCount >= 10) {
-                    clickCount = 0;
-                    overlay.classList.add('active');
-                    for (let i = 0; i < 60; i++) {
-                        setTimeout(() => {
-                            const star = document.createElement('div');
-                            star.textContent = ['✦', '✧', '⭐', '✨', '🌟'][Math.floor(Math.random() * 5)];
-                            star.style.cssText = `
+            if (card1.emoji === card2.emoji) {
+                card1.matched = true;
+                card2.matched = true;
+                matchedPairs++;
+                document.getElementById('pairsFound').textContent = matchedPairs + '/8';
+                selectedCards = [];
+                playClickSound();
+                renderMiniGame();
+
+                if (matchedPairs === 8) {
+                    isGameFinished = true;
+                    clearInterval(timerInterval);
+                    playWinSound();
+                    const bonus = 5000;
+                    points += bonus;
+                    miniGameWins++;
+                    showToast(`🎉 Победа! +${fmt(bonus)} очков! 🎉`, 'success');
+                    updateUI();
+                    setTimeout(() => {
+                        document.getElementById('closeMiniGameModal').click();
+                    }, 2000);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.flipped = false;
+                    card2.flipped = false;
+                    selectedCards = [];
+                    renderMiniGame();
+                }, 600);
+            }
+        }
+    }
+
+    document.getElementById('resetMiniGame').addEventListener('click', initMiniGame);
+
+    // ─── ПАССИВНЫЙ ДОХОД ───
+    setInterval(() => {
+        const passive = getPassive();
+        const eventBonus = getEventBonus();
+        if (passive > 0) {
+            points += passive * boostMult * eventBonus;
+        }
+
+        if (!rewardReady) {
+            rewardTimer--;
+            if (rewardTimer <= 0) {
+                rewardReady = true;
+                rewardPoints = Math.floor(500 * (1 + prestigeLevel * 0.5) * (1 + Math.random() * 0.4));
+                rewardTimer = 300;
+                playBoostSound();
+                showToast('🎁 Награда готова! Забери!', 'success');
+            }
+        }
+
+        if (boostTimer > 0) {
+            boostTimer--;
+            if (boostTimer <= 0) {
+                boostMult = 1;
+                showToast('⏳ Бустер закончился', 'info');
+            }
+        }
+
+        updateUI();
+        updateReward();
+    }, 1000);
+
+    // ─── ПАСХАЛКА ───
+    let clickCount = 0;
+    let lastClickTime = 0;
+
+    document.getElementById('clickerLogo').addEventListener('click', function(e) {
+        const now = Date.now();
+        if (now - lastClickTime > 1000) clickCount = 0;
+        clickCount++;
+        lastClickTime = now;
+
+        this.style.transform = 'scale(0.92)';
+        setTimeout(() => { this.style.transform = ''; }, 150);
+
+        if (clickCount >= 10) {
+            clickCount = 0;
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                        position: fixed; inset: 0; z-index: 999;
+                        display: flex; justify-content: center; align-items: center;
+                        background: rgba(0,0,0,0.4); backdrop-filter: blur(16px);
+                        animation: fadeOverlay 0.5s ease;
+                    `;
+            overlay.innerHTML = `
+                        <div style="background:rgba(20,16,31,0.7);backdrop-filter:blur(30px);border:2px solid rgba(130,90,255,0.1);border-radius:24px;padding:30px 40px;max-width:440px;width:90%;text-align:center;animation:modalIn 0.5s ease;">
+                            <div style="font-size:56px;">🎭</div>
+                            <div style="font-size:24px;font-weight:800;color:#FFD700;">ТЫ НАШЁЛ ДЕННИ!</div>
+                            <div style="font-size:14px;color:#A57AFF;margin:6px 0 12px;">1 in 10 000 000 000 000 000</div>
+                            <p style="color:rgba(255,255,255,0.7);font-size:13px;line-height:1.6;">🔥 Ты — один из триллиона!<br />Денни пришёл из параллельной вселенной,<br />чтобы сказать: <strong>ты легенда!</strong></p>
+                            <button onclick="this.closest('div').parentElement.remove()" style="margin-top:16px;padding:8px 32px;background:linear-gradient(135deg,#825AFF,#6A3FD4);border:none;border-radius:30px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">✧ ЗНАЮ ✧</button>
+                        </div>
+                    `;
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const star = document.createElement('div');
+                    star.textContent = ['✦', '✧', '⭐', '✨', '🌟'][Math.floor(Math.random() * 5)];
+                    star.style.cssText = `
                                 position: fixed; left: ${Math.random() * 100}vw; top: -20px;
-                                font-size: ${Math.random() * 24 + 16}px;
-                                color: ${['#FFD700', '#A57AFF', '#FF6B9D', '#46DC78', '#46A5FF'][Math.floor(Math.random() * 5)]};
+                                font-size: ${16 + Math.random() * 20}px;
+                                color: ${['#FFD700','#A57AFF','#FF6B9D','#46DC78','#46A5FF'][Math.floor(Math.random() * 5)]};
                                 pointer-events: none; z-index: 1000;
-                                animation: starFall ${Math.random() * 1.5 + 1.5}s linear forwards;
+                                animation: starFall ${1 + Math.random() * 1.5}s linear forwards;
                             `;
-                            document.body.appendChild(star);
-                            setTimeout(() => star.remove(), 3000);
-                        }, i * 40);
-                    }
-                    if (!document.getElementById('starKeyframes')) {
-                        const style = document.createElement('style');
-                        style.id = 'starKeyframes';
-                        style.textContent = `
-                            @keyframes starFall {
-                                0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
-                                100% { transform: translateY(100vh) rotate(720deg) scale(0.3); opacity: 0; }
-                            }
-                        `;
-                        document.head.appendChild(style);
-                    }
-                }
-            });
-
-            closeBtn.addEventListener('click', () => overlay.classList.remove('active'));
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) overlay.classList.remove('active');
-            });
-        })();
-
-        // ── ПАСХАЛКА 2: yyyyui39 и stakllzdev (5 кликов по ∞) ──
-        (function() {
-            const trigger = document.getElementById('infinityTrigger');
-            const overlay2 = document.getElementById('easterOverlay2');
-            const closeBtn2 = document.getElementById('closeEaster2');
-            let clickCount2 = 0;
-            let lastClickTime2 = 0;
-
-            if (!trigger) return;
-
-            trigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const now = Date.now();
-                if (now - lastClickTime2 > 2000) clickCount2 = 0;
-                clickCount2++;
-                lastClickTime2 = now;
-
-                this.style.transform = 'scale(0.7)';
-                setTimeout(() => { this.style.transform = ''; }, 200);
-
-                if (clickCount2 >= 5) {
-                    clickCount2 = 0;
-                    overlay2.classList.add('active');
-                }
-            });
-
-            closeBtn2.addEventListener('click', () => overlay2.classList.remove('active'));
-            overlay2.addEventListener('click', (e) => {
-                if (e.target === overlay2) overlay2.classList.remove('active');
-            });
-        })();
-
-        // ── СКРЕТЧ-КАРТА ──
-        (function() {
-            const wrapper = document.getElementById('scratchWrapper');
-            const canvas2 = document.getElementById('scratchCanvas');
-            const ctx2 = canvas2.getContext('2d');
-            const fill = document.getElementById('progressFill');
-            const label = document.getElementById('progressLabel');
-
-            const W = 800, H = 250;
-            let isDrawing = false, revealed = false, clearedPixels = 0;
-            const TOTAL_PIXELS = W * H;
-
-            function drawScratch() {
-                const grad = ctx2.createLinearGradient(0,0,W,H);
-                grad.addColorStop(0,'#3a3a4a');
-                grad.addColorStop(0.5,'#4a4a5a');
-                grad.addColorStop(1,'#3a3a4a');
-                ctx2.fillStyle = grad;
-                ctx2.fillRect(0,0,W,H);
-                for (let i=0; i<1500; i++) {
-                    const x=Math.random()*W, y=Math.random()*H, r=Math.random()*2+0.5;
-                    ctx2.beginPath();
-                    ctx2.arc(x,y,r,0,Math.PI*2);
-                    ctx2.fillStyle = `rgba(255,255,255,${Math.random()*0.3})`;
-                    ctx2.fill();
-                }
-                ctx2.strokeStyle='rgba(255,255,255,0.04)';
-                ctx2.lineWidth=1;
-                for (let x=0; x<W; x+=12) { ctx2.beginPath(); ctx2.moveTo(x,0); ctx2.lineTo(x,H); ctx2.stroke(); }
-                for (let y=0; y<H; y+=12) { ctx2.beginPath(); ctx2.moveTo(0,y); ctx2.lineTo(W,y); ctx2.stroke(); }
-                ctx2.font='40px sans-serif';
-                ctx2.fillStyle='rgba(255,255,255,0.06)';
-                ctx2.textAlign='center'; ctx2.textBaseline='middle';
-                ctx2.fillText('✦', W/2, H/2);
+                    document.body.appendChild(star);
+                    setTimeout(() => star.remove(), 3000);
+                }, i * 40);
             }
+            playAchievementSound();
+            showToast('🎭 Ты нашёл Денни! Ты легенда!', 'success');
+        }
+    });
 
-            function erase(x,y) {
-                if (revealed) return;
-                const radius=22;
-                const imageData=ctx2.getImageData(0,0,W,H);
-                const data=imageData.data;
-                let cleared=0;
-                const sx=Math.max(0,Math.floor(x-radius)), ex=Math.min(W,Math.ceil(x+radius));
-                const sy=Math.max(0,Math.floor(y-radius)), ey=Math.min(H,Math.ceil(y+radius));
-                for (let py=sy; py<ey; py++) {
-                    for (let px=sx; px<ex; px++) {
-                        const dx=px-x, dy=py-y;
-                        if (dx*dx+dy*dy < radius*radius) {
-                            const idx=(py*W+px)*4;
-                            if (data[idx]!==0 || data[idx+1]!==0 || data[idx+2]!==0 || data[idx+3]!==0) {
-                                data[idx]=data[idx+1]=data[idx+2]=data[idx+3]=0;
-                                cleared++;
-                            }
-                        }
-                    }
-                }
-                if (cleared>0) { ctx2.putImageData(imageData,0,0); clearedPixels+=cleared; updateProgress(); }
-            }
-
-            function updateProgress() {
-                const pct=Math.min(100, Math.round((clearedPixels/TOTAL_PIXELS)*100));
-                fill.style.width=pct+'%';
-                label.textContent=pct+'%';
-                if (pct>=100 && !revealed) {
-                    revealed=true;
-                    canvas2.style.opacity='0';
-                    canvas2.style.pointerEvents='none';
-                    label.textContent='✅ 100%';
-                    label.classList.add('done');
-                }
-            }
-
-            function resetScratch() {
-                revealed=false; clearedPixels=0;
-                canvas2.style.opacity='1'; canvas2.style.pointerEvents='auto';
-                label.classList.remove('done');
-                drawScratch(); updateProgress();
-            }
-
-            function getPos(e) {
-                const rect=canvas2.getBoundingClientRect();
-                const sx=W/rect.width, sy=H/rect.height;
-                let cx, cy;
-                if (e.touches) { cx=e.touches[0].clientX; cy=e.touches[0].clientY; e.preventDefault(); }
-                else { cx=e.clientX; cy=e.clientY; }
-                return { x:(cx-rect.left)*sx, y:(cy-rect.top)*sy };
-            }
-
-            canvas2.addEventListener('mousedown', (e)=>{ if(!revealed){ isDrawing=true; const p=getPos(e); if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H) erase(p.x,p.y); } });
-            window.addEventListener('mousemove', (e)=>{ if(isDrawing&&!revealed){ const p=getPos(e); if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H) erase(p.x,p.y); } });
-            window.addEventListener('mouseup', ()=>{ isDrawing=false; });
-            canvas2.addEventListener('touchstart', (e)=>{ if(!revealed){ isDrawing=true; const p=getPos(e); if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H) erase(p.x,p.y); } }, {passive:false});
-            window.addEventListener('touchmove', (e)=>{ if(isDrawing&&!revealed){ const p=getPos(e); if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H) erase(p.x,p.y); } }, {passive:false});
-            window.addEventListener('touchend', ()=>{ isDrawing=false; });
-
-            document.getElementById('resetBtn').addEventListener('click', resetScratch);
-            drawScratch(); updateProgress();
-
-            function resizeCanvas() {
-                const rect=wrapper.getBoundingClientRect();
-                canvas2.width=W; canvas2.height=H;
-                canvas2.style.width='100%'; canvas2.style.height='100%';
-                drawScratch(); updateProgress();
-            }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-        })();
-    </script>
+    // ─── ЗАГРУЗКА ───
+    loadGame();
+    renderPets();
+    renderAchievements();
+    updateEventDisplay();
+    setTimeout(() => showToast('👋 Привет! Нажми "ИГРАТЬ" чтобы начать!', 'info'), 600);
+</script>
 
 </body>
 </html>
