@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>👆 CLICKER</title>
+    <style>
+        /* ── ШРИФТ ── */
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap');
+
+        /* ── ОСНОВНЫЕ СТИЛИ ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #080810;
+            color: #fff;
+            font-family: 'Google Sans', 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+            min-height: 100vh;
+            animation: bgShift 12s ease-in-out infinite alternate;
+        }
+        @keyframes bgShift {
+            0% { background: #080810; }
+            25% { background: #0b0a1a; }
+            50% { background: #0f0a24; }
+            75% { background: #0a0c1e; }
+            100% { background: #080810; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a18; }
+        ::-webkit-scrollbar-thumb { background: #825AFF; border-radius: 10px; }
+
+        /* ── ПЕРВЫЙ ЭКРАН ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+            animation: fadeUp 1.2s ease-out;
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            font-size: 72px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #825AFF, #A57AFF, #FF6B9D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 4px;
+            animation: gradShift 6s ease-in-out infinite, pulseGlow 3s ease-in-out infinite;
+            background-size: 300% 300%;
+            cursor: pointer;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        h1:active { transform: scale(0.94); }
+        @keyframes gradShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(130,90,255,0.3)); }
+            50% { filter: drop-shadow(0 0 60px rgba(130,90,255,0.7)); }
+        }
+        .subtitle {
+            font-size: 20px;
+            color: #9a8ab8;
+            margin-top: 10px;
+            letter-spacing: 6px;
+            font-weight: 400;
+            animation: fadeIn 1.8s ease-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* ── КНОПКИ НАВИГАЦИИ ── */
+        .nav-bar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(12, 12, 26, 0.45);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            padding: 10px 20px;
+            border-radius: 60px;
+            border: 1px solid rgba(130, 90, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            animation: slideDown 0.8s ease-out;
+        }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .nav-btn {
+            color: #b0a8c8;
+            padding: 8px 18px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: 0.5px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: #A57AFF;
+            transition: width 0.3s ease;
+        }
+        .nav-btn:hover::after { width: 60%; }
+        .nav-btn:hover {
+            color: #fff;
+            background: rgba(130, 90, 255, 0.15);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .nav-btn:active { transform: scale(0.94); }
+
+        .btn {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 18px 56px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #825AFF, #6A3FD4);
+            border: none;
+            border-radius: 60px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 30px rgba(130,90,255,0.3);
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            animation: pulseBtn 3s ease-in-out infinite;
+        }
+        @keyframes pulseBtn {
+            0%, 100% { box-shadow: 0 0 30px rgba(130,90,255,0.3); }
+            50% { box-shadow: 0 0 60px rgba(130,90,255,0.5); }
+        }
+        .btn:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 0 80px rgba(130,90,255,0.7);
+            background: linear-gradient(135deg, #A57AFF, #825AFF);
+        }
+        .btn:active { transform: scale(0.94); }
+        .btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transform: scale(0);
+            animation: rippleAnim 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        .stats {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            color: #6a5a8a;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            animation: fadeIn 2s ease-out;
+        }
+        .stats span { color: #A57AFF; font-weight: 700; }
+        .stats div {
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .stats div:hover {
+            transform: translateY(-4px);
+            color: #fff;
+        }
+        .stats div:hover span { color: #FFD700; }
+
+        /* ── БЕСКОНЕЧНОСТЬ ДЛЯ ПАСХАЛКИ ── */
+        .stats .infinity {
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-block;
+        }
+        .stats .infinity:active {
+            transform: scale(0.8);
+        }
+
+        .scroll-down {
+            margin-top: 50px;
+            font-size: 32px;
+            animation: bob 1.8s infinite;
+            opacity: 0.5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .scroll-down:hover { opacity: 1; transform: scale(1.1); }
+        .scroll-down a { color: #825AFF; text-decoration: none; }
+        @keyframes bob {
+            0%, 100% { transform: translateY(0); opacity: 0.4; }
+            50% { transform: translateY(12px); opacity: 0.8; }
+        }
+
+        /* ── ВТОРОЙ ЭКРАН ── */
+        .info-section {
+            padding: 80px 20px 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(12, 12, 26, 0.55);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 40px 40px 0 0;
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.7);
+            position: relative;
+            z-index: 20;
+            border-top: 1px solid rgba(130, 90, 255, 0.15);
+        }
+        .info-section h2 {
+            font-size: 40px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #A57AFF, #FF6B9D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .info-section p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #e0d8ee;
+            margin-bottom: 20px;
+            text-align: justify;
+            font-weight: 400;
+        }
+        .info-section .highlight { color: #A57AFF; font-weight: 700; }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .info-card {
+            background: rgba(18, 16, 30, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 24px;
+            border-radius: 16px;
+            border-left: 4px solid #825AFF;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardUp 0.6s ease-out forwards;
+            cursor: default;
+        }
+        .info-card:nth-child(1) { animation-delay: 0.1s; }
+        .info-card:nth-child(2) { animation-delay: 0.2s; }
+        .info-card:nth-child(3) { animation-delay: 0.3s; }
+        .info-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes cardUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-card:hover {
+            background: rgba(26, 22, 42, 0.85);
+            transform: perspective(600px) rotateY(3deg) translateY(-6px) scale(1.01);
+            box-shadow: 0 16px 60px rgba(130,90,255,0.2);
+            border-color: #A57AFF;
+        }
+        .info-card:active {
+            transform: perspective(600px) rotateY(0deg) scale(0.97);
+        }
+        .info-card h3 { color: #A57AFF; font-size: 18px; margin-bottom: 8px; font-weight: 700; }
+        .info-card p { font-size: 15px; color: #b0a8c8; margin: 0; text-align: left; font-weight: 400; }
+
+        /* ── РАЗРАБОТЧИК ── */
+        .dev-block {
+            margin-top: 60px;
+            padding: 30px;
+            background: rgba(13, 11, 26, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(42, 31, 74, 0.6);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardUp 0.7s ease-out 0.5s forwards;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .dev-block:hover {
+            border-color: #825AFF;
+            box-shadow: 0 0 60px rgba(130,90,255,0.08);
+        }
+        .dev-block h3 {
+            font-size: 20px;
+            color: #A57AFF;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .dev-inner {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .dev-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #825AFF, #FF6B9D);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 0 40px rgba(130,90,255,0.4);
+            border: 3px solid #A57AFF;
+            animation: spin 10s linear infinite;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .dev-avatar:hover {
+            transform: scale(1.08) rotate(0deg);
+            box-shadow: 0 0 80px rgba(130,90,255,0.6);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .dev-info {
+            text-align: left;
+            color: #c8c0d8;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+        .dev-info .name { font-size: 28px; font-weight: 700; color: #fff; }
+        .dev-info .tag { color: #6a5a8a; font-size: 14px; font-weight: 400; }
+        .dev-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+            font-weight: 700;
+        }
+        .dev-stats span { color: #fff; }
+        .dev-desc {
+            margin-top: 20px;
+            text-align: center;
+            color: #9a8ab8;
+            font-size: 14px;
+            border-top: 1px solid rgba(26, 22, 42, 0.6);
+            padding-top: 18px;
+            font-weight: 400;
+        }
+        .dev-desc .highlight { color: #A57AFF; font-weight: 700; }
+
+        /* ── ВИКИПЕДИЯ ── */
+        .wiki-section {
+            margin-top: 60px;
+            padding: 30px;
+            background: rgba(13, 11, 26, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(42, 31, 74, 0.4);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardUp 0.7s ease-out 0.6s forwards;
+        }
+        .wiki-section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #A57AFF, #825AFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .wiki-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .wiki-card {
+            background: rgba(18, 16, 30, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(130, 90, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
+        }
+        .wiki-card:hover {
+            background: rgba(26, 22, 42, 0.7);
+            transform: translateY(-4px) scale(1.01);
+            border-color: rgba(130, 90, 255, 0.5);
+            box-shadow: 0 12px 40px rgba(130,90,255,0.1);
+        }
+        .wiki-card:active { transform: scale(0.97); }
+        .wiki-card h4 {
+            color: #A57AFF;
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+        .wiki-card p {
+            font-size: 14px;
+            color: #b0a8c8;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        .wiki-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+        .wiki-card ul li {
+            font-size: 13px;
+            color: #9a8ab8;
+            padding: 4px 0;
+            padding-left: 18px;
+            position: relative;
+            font-weight: 400;
+        }
+        .wiki-card ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #825AFF;
+        }
+        .wiki-tag {
+            display: inline-block;
+            background: rgba(130, 90, 255, 0.2);
+            color: #A57AFF;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            margin-top: 6px;
+            font-weight: 700;
+        }
+
+        /* ── ОБНОВЛЕНИЯ ── */
+        .updates-section {
+            margin-top: 60px;
+            padding: 30px;
+            background: rgba(13, 11, 26, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(130, 90, 255, 0.3);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardUp 0.7s ease-out 0.7s forwards;
+        }
+        .updates-section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #A57AFF, #46A5FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+        .update-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .update-item {
+            background: rgba(18, 16, 30, 0.5);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 18px 22px;
+            border-radius: 16px;
+            border-left: 4px solid #825AFF;
+            transition: all 0.3s ease;
+        }
+        .update-item:hover {
+            background: rgba(26, 22, 42, 0.7);
+            transform: translateX(6px);
+            border-left-width: 6px;
+        }
+        .update-item .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .update-item .version {
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+        }
+        .update-item .version .tag {
+            display: inline-block;
+            background: rgba(130, 90, 255, 0.25);
+            color: #A57AFF;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+        .update-item .date {
+            font-size: 12px;
+            color: #6a5a8a;
+            font-weight: 400;
+        }
+        .update-item .changes {
+            list-style: none;
+            padding: 0;
+            margin-top: 6px;
+        }
+        .update-item .changes li {
+            font-size: 14px;
+            color: #b0a8c8;
+            padding: 3px 0;
+            padding-left: 22px;
+            position: relative;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        .update-item .changes li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #825AFF;
+            font-weight: 700;
+        }
+
+        /* ── СКРЕТЧ-КАРТА ── */
+        .scratch-section {
+            margin-top: 60px;
+            padding: 30px 20px;
+            background: rgba(13, 11, 26, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(130, 90, 255, 0.3);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardUp 0.7s ease-out 0.7s forwards;
+        }
+        .scratch-section h3 {
+            font-size: 22px;
+            color: #A57AFF;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .scratch-section p {
+            font-size: 14px;
+            color: #9a8ab8;
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+        .scratch-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 5;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(130, 90, 255, 0.2);
+            cursor: pointer;
+            user-select: none;
+            touch-action: none;
+            transition: all 0.3s ease;
+        }
+        .scratch-wrapper:hover {
+            border-color: rgba(130, 90, 255, 0.5);
+            box-shadow: 0 0 40px rgba(130,90,255,0.1);
+        }
+        .scratch-back {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #1a1030, #2a1a4a);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 3px;
+            color: #FFD700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        .scratch-back small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #b0a8c8;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            text-shadow: none;
+        }
+        .scratch-back .code {
+            font-family: 'Google Sans', 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 16px;
+            border-radius: 10px;
+            font-size: 30px;
+            letter-spacing: 6px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            font-weight: 700;
+        }
+        .scratch-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            transition: opacity 0.3s;
+            pointer-events: auto;
+        }
+        .scratch-layer.revealed {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .scratch-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 520px;
+            margin: 12px auto 0;
+        }
+        .scratch-progress .track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .scratch-progress .track .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #825AFF, #A57AFF);
+            border-radius: 20px;
+            transition: width 0.15s;
+        }
+        .scratch-progress .label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #b0a8c8;
+            min-width: 44px;
+            text-align: right;
+        }
+        .scratch-progress .label.done {
+            color: #FFD700;
+        }
+        .scratch-reset {
+            margin-top: 12px;
+            padding: 8px 24px;
+            background: rgba(130, 90, 255, 0.15);
+            border: 1px solid #825AFF;
+            border-radius: 40px;
+            color: #A57AFF;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-block;
+        }
+        .scratch-reset:hover {
+            background: rgba(130, 90, 255, 0.3);
+            box-shadow: 0 0 30px rgba(130, 90, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .scratch-reset:active { transform: scale(0.94); }
+
+        .back-top {
+            display: block;
+            margin: 40px auto 20px;
+            text-align: center;
+            color: #6a5a8a;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-weight: 700;
+        }
+        .back-top:hover {
+            color: #A57AFF;
+            transform: translateY(-3px) scale(1.04);
+        }
+        .back-top:active { transform: scale(0.94); }
+
+        /* ── ОВЕРЛЕЙ ДЛЯ ПАСХАЛОК ── */
+        .easter-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            animation: fadeOverlay 0.5s ease-out;
+        }
+        .easter-overlay.active { display: flex; }
+        @keyframes fadeOverlay {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .easter-popup {
+            background: linear-gradient(145deg, #0f0a1a, #1a1030);
+            border: 2px solid #825AFF;
+            border-radius: 32px;
+            padding: 40px 50px;
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 80px rgba(130, 90, 255, 0.3);
+            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .easter-popup:hover {
+            box-shadow: 0 0 120px rgba(130, 90, 255, 0.5);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .easter-popup .icon {
+            font-size: 72px;
+            margin-bottom: 8px;
+            animation: floatIcon 2s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+        .easter-popup .icon:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .easter-popup .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFD700;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+            letter-spacing: 2px;
+        }
+        .easter-popup .subtitle {
+            font-size: 18px;
+            color: #A57AFF;
+            margin: 8px 0 16px;
+            background: rgba(130, 90, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 700;
+        }
+        .easter-popup .desc {
+            color: #b0a8c8;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        .easter-popup .close-btn {
+            margin-top: 20px;
+            padding: 10px 36px;
+            background: linear-gradient(135deg, #825AFF, #6A3FD4);
+            border: none;
+            border-radius: 40px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .easter-popup .close-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 40px rgba(130, 90, 255, 0.4);
+        }
+        .easter-popup .close-btn:active { transform: scale(0.94); }
+
+        /* ── CANVAS ── */
+        #particlesCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @media (max-width: 700px) {
+            h1 { font-size: 40px; }
+            .subtitle { font-size: 14px; letter-spacing: 3px; }
+            .btn { padding: 14px 32px; font-size: 16px; }
+            .stats { flex-direction: column; gap: 8px; }
+            .info-grid { grid-template-columns: 1fr; }
+            .info-section h2 { font-size: 28px; }
+            .info-section p { font-size: 16px; }
+            .dev-inner { flex-direction: column; text-align: center; }
+            .dev-info { text-align: center; }
+            .dev-stats { justify-content: center; }
+            .nav-bar {
+                top: 12px;
+                padding: 6px 12px;
+                gap: 4px;
+                border-radius: 30px;
+            }
+            .nav-btn { font-size: 10px; padding: 4px 10px; }
+            .wiki-grid { grid-template-columns: 1fr; }
+            .wiki-section h2 { font-size: 22px; }
+            .update-item .header { flex-direction: column; align-items: flex-start; }
+            .scratch-back .code { font-size: 20px; letter-spacing: 3px; padding: 2px 10px; }
+            .scratch-back { font-size: 20px; }
+            .scratch-wrapper { aspect-ratio: 16 / 5; }
+            .easter-popup { padding: 28px 20px; }
+            .easter-popup .icon { font-size: 52px; }
+            .easter-popup .title { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particlesCanvas" aria-hidden="true"></canvas>
+
+    <!-- НАВИГАЦИЯ -->
+    <nav class="nav-bar" aria-label="Основная навигация">
+        <a href="https://discord.gg/QXXqzX2vV" target="_blank" class="nav-btn" aria-label="Перейти в Discord сообщество">🔊 Community</a>
+        <a href="https://github.com/stakllzdev" target="_blank" class="nav-btn" aria-label="Исходный код на GitHub">📰 Sources</a>
+        <a href="https://www.roblox.com/games/85805488315374" target="_blank" class="nav-btn" aria-label="Страница игры в Roblox">🎮 Resources</a>
+        <a href="#" target="_blank" class="nav-btn" aria-label="Страница для донатов">❤️ Donate</a>
+        <a href="#" target="_blank" class="nav-btn" aria-label="Список участников проекта">👥 Contributors</a>
+    </nav>
+
+    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <main class="hero" role="main">
+        <h1 id="clickerLogo" aria-label="Кликер — логотип">👆 CLICKER</h1>
+        <p class="subtitle" aria-label="Слоган игры">НАЖМИ — И СЛОМАЙ ВСЕЛЕННУЮ</p>
+        <a href="https://www.roblox.com/games/85805488315374" class="btn" id="mainBtn" target="_blank" aria-label="Перейти на страницу игры и начать играть">🚀 ИГРАТЬ</a>
+        <div class="stats">
+            <div aria-label="Бесконечные очки">💎 ОЧКИ <span class="infinity" id="infinityTrigger" aria-label="Бесконечность">∞</span></div>
+            <div aria-label="Количество игроков">👥 ИГРОКИ <span>1 234</span></div>
+            <div aria-label="Бесконечный престиж">⭐ ПРЕСТИЖ <span aria-label="Бесконечность">∞</span></div>
+        </div>
+        <div class="scroll-down" role="button" aria-label="Прокрутить вниз к информации об игре">
+            <a href="#info" aria-hidden="true">⬇</a>
+        </div>
+    </main>
+
+    <!-- ИНФОРМАЦИЯ -->
+    <section class="info-section" id="info" aria-label="Информация об игре">
+        <h2>🚀 ОБ ИГРЕ</h2>
+        <p><span class="highlight">Clicker</span> — это не просто кликер. Это история о том, как один разработчик решил доказать, что кликеры могут быть <span class="highlight">глубокими, красивыми и бесконечными</span>.</p>
+        <p>В игре <span class="highlight">более 40 улучшений</span>, система престижа, десятки питомцев и живое сообщество.</p>
+
+        <div class="info-grid">
+            <div class="info-card"><h3>🔥 44 улучшения</h3><p>От базовых до магических и научно-фантастических.</p></div>
+            <div class="info-card"><h3>🐉 Питомцы</h3><p>Семь редкостей, от обычного до секретного.</p></div>
+            <div class="info-card"><h3>⭐ Престиж</h3><p>Перерождайся и становись сильнее.</p></div>
+            <div class="info-card"><h3>👥 Сообщество</h3><p>Обмен питомцами, таблица лидеров.</p></div>
+        </div>
+
+        <!-- ─── ВИКИПЕДИЯ ─── -->
+        <div class="wiki-section" aria-label="Мини-википедия игры">
+            <h2>📖 ВИКИПЕДИЯ ИГРЫ</h2>
+            <div class="wiki-grid">
+                <div class="wiki-card"><h4>⚡ Улучшения</h4><p>44 улучшения в 5 категориях: База, Магия, Sci-Fi, Природа, Тьма.</p></div>
+                <div class="wiki-card"><h4>🐾 Питомцы</h4><p>7 редкостей: от Обычного до Секретного. 21 питомец.</p></div>
+                <div class="wiki-card"><h4>⚙️ Системы</h4><p>Комбо, криты, бустеры, награды, коды, таблица лидеров.</p></div>
+                <div class="wiki-card"><h4>⭐ Престиж</h4><p>Перерождение с +50% бонусом. Цена растёт: 1М → 3М → 9М → ...</p></div>
+            </div>
+        </div>
+
+        <!-- ─── ОБНОВЛЕНИЯ ─── -->
+        <div class="updates-section" aria-label="Список обновлений игры">
+            <h2>📋 ОБНОВЛЕНИЯ</h2>
+            <div class="update-list">
+                <div class="update-item">
+                    <div class="header">
+                        <div class="version">v2.4 <span class="tag">ПИТОМЦЫ</span></div>
+                        <div class="date">03.07.2026</div>
+                    </div>
+                    <ul class="changes">
+                        <li>🐉 Добавлена система питомцев — 21 питомец, 7 редкостей</li>
+                        <li>🥚 5 видов яиц: от обычного до легендарного</li>
+                        <li>🎒 Инвентарь с экипировкой до 3 питомцев</li>
+                        <li>✨ Питомцы дают пассивный бонус к множителю</li>
+                    </ul>
+                </div>
+                <div class="update-item">
+                    <div class="header">
+                        <div class="version">v2.3 <span class="tag">ПРОФИЛИ</span></div>
+                        <div class="date">02.07.2026</div>
+                    </div>
+                    <ul class="changes">
+                        <li>👤 Новая кнопка профиля (чуть больше остальных)</li>
+                        <li>🏅 Медали — за достижения и от администратора</li>
+                        <li>🪨 Тир-система: Новичок → Медный → ... → Легендарный</li>
+                        <li>📊 Статистика: клики, криты, питомцы</li>
+                        <li>🏆 Прогресс достижений с полоской</li>
+                    </ul>
+                </div>
+                <div class="update-item">
+                    <div class="header">
+                        <div class="version">v2.2 <span class="tag">VIP</span></div>
+                        <div class="date">01.07.2026</div>
+                    </div>
+                    <ul class="changes">
+                        <li>⭐ VIP статус через GamePass Roblox</li>
+                        <li>🐉 VIP питомец — Золотой дракон (+10 к множителю)</li>
+                        <li>💰 +15% к очкам за клик и пассивному доходу</li>
+                        <li>🏆 Золотой ник и бейдж [VIP] в таблице лидеров</li>
+                    </ul>
+                </div>
+                <div class="update-item">
+                    <div class="header">
+                        <div class="version">v2.1 <span class="tag">ОБМЕН</span></div>
+                        <div class="date">30.06.2026</div>
+                    </div>
+                    <ul class="changes">
+                        <li>🔄 Новая вкладка обмена питомцами с другими игроками</li>
+                        <li>🗑 Кнопка удаления питомца с двойным подтверждением</li>
+                        <li>👥 Список онлайн-игроков для выбора партнёра</li>
+                        <li>✓ Обмен требует подтверждения от обеих сторон</li>
+                    </ul>
+                </div>
+                <div class="update-item">
+                    <div class="header">
+                        <div class="version">v1.9 <span class="tag">ЯЙЦА</span></div>
+                        <div class="date">29.06.2026</div>
+                    </div>
+                    <ul class="changes">
+                        <li>🥚 Первая версия системы яиц и питомцев</li>
+                        <li>🐾 5 редкостей: Обычный → Секретный</li>
+                        <li>🎉 Анимация при выпадении редкого питомца</li>
+                    </ul>
+                </div>
+                <div class="update-item">
+                    <div class="header">
+                        <div class="version">v1.0 <span class="tag">РЕЛИЗ</span></div>
+                        <div class="date">20.06.2026</div>
+                    </div>
+                    <ul class="changes">
+                        <li>🎮 Базовая механика кликера</li>
+                        <li>🛒 Магазин с 5 улучшениями</li>
+                        <li>⭐ Система престижа</li>
+                        <li>💾 Сохранение прогресса</li>
+                        <li>📱 Адаптация под телефоны</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── СКРЕТЧ-КАРТА ─── -->
+        <div class="scratch-section" aria-label="Скретч-карта с промокодом">
+            <h3>🎁 СКРЕТЧ-КАРТА</h3>
+            <p>Проведи мышкой с зажатой левой кнопкой, чтобы стереть слой и получить код</p>
+            <div class="scratch-wrapper" id="scratchWrapper">
+                <div class="scratch-back">
+                    <span class="code">DEVELOPER</span>
+                    <small>★ введи в игре и получи 1 000 000 очков ★</small>
+                </div>
+                <canvas class="scratch-layer" id="scratchCanvas" width="800" height="250"></canvas>
+            </div>
+            <div class="scratch-progress">
+                <span class="label" id="progressLabel">0%</span>
+                <div class="track">
+                    <div class="fill" id="progressFill" style="width:0%;"></div>
+                </div>
+            </div>
+            <button class="scratch-reset" id="resetBtn">↻ Сбросить</button>
+        </div>
+
+        <!-- РАЗРАБОТЧИК -->
+        <div class="dev-block" aria-label="Блок о разработчике">
+            <h3>👤 РАЗРАБОТЧИК</h3>
+            <div class="dev-inner">
+                <div class="dev-avatar" role="img" aria-label="Аватар разработчика stakllzdev">👤</div>
+                <div class="dev-info">
+                    <div class="name">stakllzdev</div>
+                    <div class="tag">@stakllzdev</div>
+                    <div class="dev-stats">
+                        <span>👥 <span>5</span> друзей</span>
+                        <span>📢 <span>136</span> подписчиков</span>
+                        <span>📖 <span>0</span> подписок</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dev-desc">
+                🎮 Создатель <span class="highlight">Clicker</span> — игры, где каждый клик приближает тебя к бесконечности.<br />
+                🧠 Дизайн, код, питомцы, престиж — всё сделано с нуля.
+            </div>
+        </div>
+
+        <p style="text-align:center;margin-top:30px;color:#6a5a8a;font-size:14px;">
+            <span class="highlight">Сделано с душой.</span> Без читов, доната и AI-контента.
+        </p>
+        <a href="#" class="back-top" aria-label="Вернуться наверх страницы">⬆ Наверх</a>
+    </section>
+
+    <!-- ─── ПАСХАЛКА 1: ДЕННИ ─── -->
+    <div class="easter-overlay" id="dennyOverlay">
+        <div class="easter-popup">
+            <div class="icon">🎭</div>
+            <div class="title">ТЫ НАШЁЛ ДЕННИ!</div>
+            <div class="subtitle">1 in 10 000 000 000 000 000</div>
+            <p class="desc">
+                🔥 Ты — один из триллиона!<br />
+                Денни пришёл из параллельной вселенной,<br />
+                чтобы сказать: <strong>ты легенда!</strong>
+            </p>
+            <button class="close-btn" id="dennyClose">✧ ЗНАЮ ✧</button>
+        </div>
+    </div>
+
+    <!-- ─── ПАСХАЛКА 2: yyyyui39 и stakllzdev ─── -->
+    <div class="easter-overlay" id="easterOverlay2">
+        <div class="easter-popup">
+            <div class="icon">👣</div>
+            <div class="title">yyyyui39 и stakllzdev были здесь..</div>
+            <div class="subtitle">★ они оставили свой след в истории ★</div>
+            <p class="desc">
+                🔥 Две легенды прошли по этой вселенной<br />
+                и оставили след, который никто не сотрёт.
+            </p>
+            <button class="close-btn" id="closeEaster2">✧ ПРИНЯТО ✧</button>
+        </div>
+    </div>
+
+    <!-- ─── СКРИПТЫ ─── -->
+    <script>
+        // ── ЧАСТИЦЫ ──
+        const canvas = document.getElementById('particlesCanvas');
+        const ctx = canvas.getContext('2d');
+        let w, h;
+        let scrollY = 0;
+        const particles = [];
+        const COUNT = 140;
+        const COLORS = ['#825AFF','#A57AFF','#FF6B9D','#FFCD37','#46DC78','#46A5FF'];
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+                this.parallaxFactor = 0.2 + Math.random() * 0.6;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = 0.05 + Math.random() * 0.2;
+            }
+            reset() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.size = Math.random() * 2.5 + 1;
+                this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                this.alpha = Math.random() * 0.4 + 0.2;
+                this.pulse = Math.random() * Math.PI * 2;
+                this.pulseSpeed = 0.01 + Math.random() * 0.02;
+                this.baseX = this.x;
+                this.baseY = this.y;
+            }
+            update(scrollOffset) {
+                this.angle += this.speed * 0.005;
+                const driftX = Math.sin(this.angle) * 0.3;
+                const driftY = Math.cos(this.angle * 0.7) * 0.3;
+                const parallaxOffset = scrollOffset * this.parallaxFactor * 0.1;
+                this.x = this.baseX + driftX + parallaxOffset * (this.x / w - 0.5);
+                this.y = this.baseY + driftY + parallaxOffset * (this.y / h - 0.5) * 0.5;
+                this.pulse += this.pulseSpeed;
+                this.currentSize = this.size + Math.sin(this.pulse) * 0.4;
+                this.currentAlpha = this.alpha + Math.sin(this.pulse * 0.7) * 0.1;
+                if (this.x < -50) { this.x = w + 50; this.baseX = this.x; }
+                if (this.x > w + 50) { this.x = -50; this.baseX = this.x; }
+                if (this.y < -50) { this.y = h + 50; this.baseY = this.y; }
+                if (this.y > h + 50) { this.y = -50; this.baseY = this.y; }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.max(0.3, this.currentSize), 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = Math.max(0.05, Math.min(0.8, this.currentAlpha));
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+
+        function drawLines() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = '#825AFF';
+                        ctx.globalAlpha = 0.04 * (1 - dist / 120) * (0.5 + Math.sin(Date.now() / 3000 + i) * 0.5);
+                        ctx.lineWidth = 0.6;
+                        ctx.stroke();
+                        ctx.globalAlpha = 1;
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => { p.update(scrollY); p.draw(); });
+            drawLines();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
+        window.addEventListener('resize', () => {
+            resize();
+            particles.forEach(p => {
+                p.baseX = p.x = Math.random() * w;
+                p.baseY = p.y = Math.random() * h;
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // ── RIPPLЕ-ЭФФЕКТ ──
+        document.getElementById('mainBtn').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.cssText = `
+                position: absolute; border-radius: 50%;
+                background: rgba(255,255,255,0.4);
+                width: ${size}px; height: ${size}px;
+                left: ${e.clientX - rect.left - size/2}px;
+                top: ${e.clientY - rect.top - size/2}px;
+                transform: scale(0);
+                animation: rippleAnim 0.7s ease-out forwards;
+                pointer-events: none; z-index: 10;
+            `;
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 800);
+        });
+
+        // ── ПАСХАЛКА 1: ДЕННИ (10 кликов по логотипу) ──
+        (function() {
+            const logo = document.getElementById('clickerLogo');
+            const overlay = document.getElementById('dennyOverlay');
+            const closeBtn = document.getElementById('dennyClose');
+            let clickCount = 0;
+            let lastClickTime = 0;
+
+            logo.addEventListener('click', function(e) {
+                const now = Date.now();
+                if (now - lastClickTime > 1000) clickCount = 0;
+                clickCount++;
+                lastClickTime = now;
+                logo.style.transform = 'scale(0.92)';
+                setTimeout(() => { logo.style.transform = ''; }, 150);
+
+                if (clickCount >= 10) {
+                    clickCount = 0;
+                    overlay.classList.add('active');
+                    for (let i = 0; i < 60; i++) {
+                        setTimeout(() => {
+                            const star = document.createElement('div');
+                            star.textContent = ['✦', '✧', '⭐', '✨', '🌟'][Math.floor(Math.random() * 5)];
+                            star.style.cssText = `
+                                position: fixed; left: ${Math.random() * 100}vw; top: -20px;
+                                font-size: ${Math.random() * 24 + 16}px;
+                                color: ${['#FFD700', '#A57AFF', '#FF6B9D', '#46DC78', '#46A5FF'][Math.floor(Math.random() * 5)]};
+                                pointer-events: none; z-index: 1000;
+                                animation: starFall ${Math.random() * 1.5 + 1.5}s linear forwards;
+                            `;
+                            document.body.appendChild(star);
+                            setTimeout(() => star.remove(), 3000);
+                        }, i * 40);
+                    }
+                    if (!document.getElementById('starKeyframes')) {
+                        const style = document.createElement('style');
+                        style.id = 'starKeyframes';
+                        style.textContent = `
+                            @keyframes starFall {
+                                0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+                                100% { transform: translateY(100vh) rotate(720deg) scale(0.3); opacity: 0; }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
+                }
+            });
+
+            closeBtn.addEventListener('click', () => overlay.classList.remove('active'));
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            });
+        })();
+
+        // ── ПАСХАЛКА 2: yyyyui39 и stakllzdev (5 кликов по ∞) ──
+        (function() {
+            const trigger = document.getElementById('infinityTrigger');
+            const overlay2 = document.getElementById('easterOverlay2');
+            const closeBtn2 = document.getElementById('closeEaster2');
+            let clickCount2 = 0;
+            let lastClickTime2 = 0;
+
+            if (!trigger) return;
+
+            trigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const now = Date.now();
+                if (now - lastClickTime2 > 2000) clickCount2 = 0;
+                clickCount2++;
+                lastClickTime2 = now;
+
+                this.style.transform = 'scale(0.7)';
+                setTimeout(() => { this.style.transform = ''; }, 200);
+
+                if (clickCount2 >= 5) {
+                    clickCount2 = 0;
+                    overlay2.classList.add('active');
+                }
+            });
+
+            closeBtn2.addEventListener('click', () => overlay2.classList.remove('active'));
+            overlay2.addEventListener('click', (e) => {
+                if (e.target === overlay2) overlay2.classList.remove('active');
+            });
+        })();
+
+        // ── СКРЕТЧ-КАРТА ──
+        (function() {
+            const wrapper = document.getElementById('scratchWrapper');
+            const canvas2 = document.getElementById('scratchCanvas');
+            const ctx2 = canvas2.getContext('2d');
+            const fill = document.getElementById('progressFill');
+            const label = document.getElementById('progressLabel');
+
+            const W = 800, H = 250;
+            let isDrawing = false, revealed = false, clearedPixels = 0;
+            const TOTAL_PIXELS = W * H;
+
+            function drawScratch() {
+                const grad = ctx2.createLinearGradient(0,0,W,H);
+                grad.addColorStop(0,'#3a3a4a');
+                grad.addColorStop(0.5,'#4a4a5a');
+                grad.addColorStop(1,'#3a3a4a');
+                ctx2.fillStyle = grad;
+                ctx2.fillRect(0,0,W,H);
+                for (let i=0; i<1500; i++) {
+                    const x=Math.random()*W, y=Math.random()*H, r=Math.random()*2+0.5;
+                    ctx2.beginPath();
+                    ctx2.arc(x,y,r,0,Math.PI*2);
+                    ctx2.fillStyle = `rgba(255,255,255,${Math.random()*0.3})`;
+                    ctx2.fill();
+                }
+                ctx2.strokeStyle='rgba(255,255,255,0.04)';
+                ctx2.lineWidth=1;
+                for (let x=0; x<W; x+=12) { ctx2.beginPath(); ctx2.moveTo(x,0); ctx2.lineTo(x,H); ctx2.stroke(); }
+                for (let y=0; y<H; y+=12) { ctx2.beginPath(); ctx2.moveTo(0,y); ctx2.lineTo(W,y); ctx2.stroke(); }
+                ctx2.font='40px sans-serif';
+                ctx2.fillStyle='rgba(255,255,255,0.06)';
+                ctx2.textAlign='center'; ctx2.textBaseline='middle';
+                ctx2.fillText('✦', W/2, H/2);
+            }
+
+            function erase(x,y) {
+                if (revealed) return;
+                const radius=22;
+                const imageData=ctx2.getImageData(0,0,W,H);
+                const data=imageData.data;
+                let cleared=0;
+                const sx=Math.max(0,Math.floor(x-radius)), ex=Math.min(W,Math.ceil(x+radius));
+                const sy=Math.max(0,Math.floor(y-radius)), ey=Math.min(H,Math.ceil(y+radius));
+                for (let py=sy; py<ey; py++) {
+                    for (let px=sx; px<ex; px++) {
+                        const dx=px-x, dy=py-y;
+                        if (dx*dx+dy*dy < radius*radius) {
+                            const idx=(py*W+px)*4;
+                            if (data[idx]!==0 || data[idx+1]!==0 || data[idx+2]!==0 || data[idx+3]!==0) {
+                                data[idx]=data[idx+1]=data[idx+2]=data[idx+3]=0;
+                                cleared++;
+                            }
+                        }
+                    }
+                }
+                if (cleared>0) { ctx2.putImageData(imageData,0,0); clearedPixels+=cleared; updateProgress(); }
+            }
+
+            function updateProgress() {
+                const pct=Math.min(100, Math.round((clearedPixels/TOTAL_PIXELS)*100));
+                fill.style.width=pct+'%';
+                label.textContent=pct+'%';
+                if (pct>=100 && !revealed) {
+                    revealed=true;
+                    canvas2.style.opacity='0';
+                    canvas2.style.pointerEvents='none';
+                    label.textContent='✅ 100%';
+                    label.classList.add('done');
+                }
+            }
+
+            function resetScratch() {
+                revealed=false; clearedPixels=0;
+                canvas2.style.opacity='1'; canvas2.style.pointerEvents='auto';
+                label.classList.remove('done');
+                drawScratch(); updateProgress();
+            }
+
+            function getPos(e) {
+                const rect=canvas2.getBoundingClientRect();
+                const sx=W/rect.width, sy=H/rect.height;
+                let cx, cy;
+                if (e.touches) { cx=e.touches[0].clientX; cy=e.touches[0].clientY; e.preventDefault(); }
+                else { cx=e.clientX; cy=e.clientY; }
+                return { x:(cx-rect.left)*sx, y:(cy-rect.top)*sy };
+            }
+
+            canvas2.addEventListener('mousedown', (e)=>{ if(!revealed){ isDrawing=true; const p=getPos(e); if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H) erase(p.x,p.y); } });
+            window.addEventListener('mousemove', (e)=>{ if(isDrawing&&!revealed){ const p=getPos(e); if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H) erase(p.x,p.y); } });
+            window.addEventListener('mouseup', ()=>{ isDrawing=false; });
+            canvas2.addEventListener('touchstart', (e)=>{ if(!revealed){ isDrawing=true; const p=getPos(e); if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H) erase(p.x,p.y); } }, {passive:false});
+            window.addEventListener('touchmove', (e)=>{ if(isDrawing&&!revealed){ const p=getPos(e); if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H) erase(p.x,p.y); } }, {passive:false});
+            window.addEventListener('touchend', ()=>{ isDrawing=false; });
+
+            document.getElementById('resetBtn').addEventListener('click', resetScratch);
+            drawScratch(); updateProgress();
+
+            function resizeCanvas() {
+                const rect=wrapper.getBoundingClientRect();
+                canvas2.width=W; canvas2.height=H;
+                canvas2.style.width='100%'; canvas2.style.height='100%';
+                drawScratch(); updateProgress();
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        })();
+    </script>
+
+</body>
+</html>
